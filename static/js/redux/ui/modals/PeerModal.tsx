@@ -12,7 +12,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { getActiveTimetableDenormCourses } from "../../state";
 import Modal from "./Modal";
 import { useActions, useAppDispatch, useAppSelector } from "../../hooks";
@@ -21,6 +21,7 @@ import { userInfoActions } from "../../state/slices";
 import { peerModalActions } from "../../state/slices/peerModalSlice";
 import { selectSlotColorData } from "../../state/slices/themeSlice";
 import { parseInstructors } from "../CourseModalSection";
+import { Box, Tab, Tabs, Typography } from "@mui/material";
 
 const modalStyle = {
   height: "85%",
@@ -106,6 +107,11 @@ const PeerModal = () => {
   const isLoading = useAppSelector((state) => state.peerModal.isLoading);
   const isVisible = useAppSelector((state) => state.peerModal.isVisible);
   const slotColorData = useAppSelector(selectSlotColorData);
+  const [value, setValue] = useState(0);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
 
   useEffect(() => {
     if (isVisible && userInfo.social_all) {
@@ -167,11 +173,82 @@ const PeerModal = () => {
         backgroundImage: `url(https://graph.facebook.com/${userInfo.fbook_uid}/picture?width=700&height=700)`,
       };
 
+  interface TabPanelProps {
+    children?: React.ReactNode;
+    index: number;
+    value: number;
+  }
+
+  function TabPanel(props: TabPanelProps) {
+    const { children, value, index, ...other } = props;
+
+    return (
+      <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`vertical-tabpanel-${index}`}
+        aria-labelledby={`vertical-tab-${index}`}
+        {...other}
+      >
+        {value === index && (
+          <Box sx={{ p: 3 }}>
+            <Typography>{children}</Typography>
+          </Box>
+        )}
+      </div>
+    );
+  }
+
+  function a11yProps(index: number) {
+    return {
+      id: `vertical-tab-${index}`,
+      "aria-controls": `vertical-tabpanel-${index}`,
+    };
+  }
+
   const sideBar = (
     <div className="pm-side-bar">
-      <div className="circle-pic" style={proPicStyle} />
-      <p>Your Courses</p>
-      {sideSlots}
+      <Box
+        sx={{ flexGrow: 1, bgcolor: "background.paper", display: "flex", height: 224 }}
+      >
+        <Tabs
+          orientation="vertical"
+          variant="standard"
+          value={value}
+          onChange={handleChange}
+          aria-label="Vertical tabs example"
+          sx={{ borderRight: 1, borderColor: "divider" }}
+        >
+          <Tab label="Item One" {...a11yProps(0)} />
+          <Tab label="Item Two" {...a11yProps(1)} />
+          <Tab label="Item Three" {...a11yProps(2)} />
+          <Tab label="Item Four" {...a11yProps(3)} />
+          <Tab label="Item Five" {...a11yProps(4)} />
+          <Tab label="Item Six" {...a11yProps(5)} />
+          <Tab label="Item Seven" {...a11yProps(6)} />
+        </Tabs>
+        <TabPanel value={value} index={0}>
+          Item One
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          Item Two
+        </TabPanel>
+        <TabPanel value={value} index={2}>
+          Item Three
+        </TabPanel>
+        <TabPanel value={value} index={3}>
+          Item Four
+        </TabPanel>
+        <TabPanel value={value} index={4}>
+          Item Five
+        </TabPanel>
+        <TabPanel value={value} index={5}>
+          Item Six
+        </TabPanel>
+        <TabPanel value={value} index={6}>
+          Item Seven
+        </TabPanel>
+      </Box>
     </div>
   );
 
