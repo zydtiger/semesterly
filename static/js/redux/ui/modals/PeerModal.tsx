@@ -22,6 +22,11 @@ import { peerModalActions } from "../../state/slices/peerModalSlice";
 import { selectSlotColorData } from "../../state/slices/themeSlice";
 import { parseInstructors } from "../CourseModalSection";
 import { Box, Tab, Tabs, Typography } from "@mui/material";
+import RequestsReceived from "./PeerModalComponents/RequestsReceived";
+import FindNewFriends from "./PeerModalComponents/FindNewFriends";
+import CurrentFriends from "./PeerModalComponents/CurrentFriends";
+import RequestsSent from "./PeerModalComponents/RequestsSent";
+import FriendsCourses from "./PeerModalComponents/FriendsCourses";
 
 const modalStyle = {
   height: "85%",
@@ -173,85 +178,6 @@ const PeerModal = () => {
         backgroundImage: `url(https://graph.facebook.com/${userInfo.fbook_uid}/picture?width=700&height=700)`,
       };
 
-  interface TabPanelProps {
-    children?: React.ReactNode;
-    index: number;
-    value: number;
-  }
-
-  function TabPanel(props: TabPanelProps) {
-    const { children, value, index, ...other } = props;
-
-    return (
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`vertical-tabpanel-${index}`}
-        aria-labelledby={`vertical-tab-${index}`}
-        {...other}
-      >
-        {value === index && (
-          <Box sx={{ p: 3 }}>
-            <Typography>{children}</Typography>
-          </Box>
-        )}
-      </div>
-    );
-  }
-
-  function a11yProps(index: number) {
-    return {
-      id: `vertical-tab-${index}`,
-      "aria-controls": `vertical-tabpanel-${index}`,
-    };
-  }
-
-  const sideBar = (
-    <div className="pm-side-bar">
-      <Box
-        sx={{ flexGrow: 1, bgcolor: "background.paper", display: "flex", height: 224 }}
-      >
-        <Tabs
-          orientation="vertical"
-          variant="standard"
-          value={value}
-          onChange={handleChange}
-          aria-label="Vertical tabs example"
-          sx={{ borderRight: 1, borderColor: "divider" }}
-        >
-          <Tab label="Item One" {...a11yProps(0)} />
-          <Tab label="Item Two" {...a11yProps(1)} />
-          <Tab label="Item Three" {...a11yProps(2)} />
-          <Tab label="Item Four" {...a11yProps(3)} />
-          <Tab label="Item Five" {...a11yProps(4)} />
-          <Tab label="Item Six" {...a11yProps(5)} />
-          <Tab label="Item Seven" {...a11yProps(6)} />
-        </Tabs>
-        <TabPanel value={value} index={0}>
-          Item One
-        </TabPanel>
-        <TabPanel value={value} index={1}>
-          Item Two
-        </TabPanel>
-        <TabPanel value={value} index={2}>
-          Item Three
-        </TabPanel>
-        <TabPanel value={value} index={3}>
-          Item Four
-        </TabPanel>
-        <TabPanel value={value} index={4}>
-          Item Five
-        </TabPanel>
-        <TabPanel value={value} index={5}>
-          Item Six
-        </TabPanel>
-        <TabPanel value={value} index={6}>
-          Item Seven
-        </TabPanel>
-      </Box>
-    </div>
-  );
-
   const upsell = (
     <div className="peer-card">
       <div className="peer-card-wrapper upsell cf">
@@ -356,6 +282,79 @@ const PeerModal = () => {
     </div>
   );
 
+  interface TabPanelProps {
+    children?: React.ReactNode;
+    index: number;
+    value: number;
+  }
+
+  function TabPanel(props: TabPanelProps) {
+    const { children, value, index, ...other } = props;
+
+    return (
+      <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`vertical-tabpanel-${index}`}
+        aria-labelledby={`vertical-tab-${index}`}
+        {...other}
+      >
+        {value === index && (
+          <Box sx={{ p: 3 }}>
+            <Typography>{children}</Typography>
+          </Box>
+        )}
+      </div>
+    );
+  }
+
+  function a11yProps(index: number) {
+    return {
+      id: `vertical-tab-${index}`,
+      "aria-controls": `vertical-tabpanel-${index}`,
+    };
+  }
+
+  const sideBar = (
+    <div>
+      <Box sx={{ flexGrow: 1, bgcolor: "background.paper", display: "flex" }}>
+        <Tabs
+          orientation="vertical"
+          variant="fullWidth"
+          value={value}
+          onChange={handleChange}
+          aria-label="Vertical tabs example"
+          sx={{ borderRight: 1, borderColor: "divider" }}
+        >
+          <Tab label="Classmates" {...a11yProps(0)} />
+          <Tab label="Find New Friends" {...a11yProps(1)} />
+          <Tab label="Current Friends" {...a11yProps(2)} />
+          <Tab label="Requests Received" {...a11yProps(3)} />
+          <Tab label="Requests Sent" {...a11yProps(4)} />
+          <Tab label="Friend Courses" {...a11yProps(5)} />
+        </Tabs>
+        <TabPanel value={value} index={0}>
+          {display}
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          <FindNewFriends />
+        </TabPanel>
+        <TabPanel value={value} index={2}>
+          <CurrentFriends />
+        </TabPanel>
+        <TabPanel value={value} index={3}>
+          <RequestsReceived />
+        </TabPanel>
+        <TabPanel value={value} index={4}>
+          <RequestsSent />
+        </TabPanel>
+        <TabPanel value={value} index={5}>
+          <FriendsCourses />
+        </TabPanel>
+      </Box>
+    </div>
+  );
+
   return (
     <Modal
       visible={isVisible}
@@ -365,10 +364,7 @@ const PeerModal = () => {
       className="peer-modal"
       customStyles={modalStyle}
     >
-      <div className="content-wrapper">
-        {sideBar}
-        {display}
-      </div>
+      {sideBar}
     </Modal>
   );
 };
