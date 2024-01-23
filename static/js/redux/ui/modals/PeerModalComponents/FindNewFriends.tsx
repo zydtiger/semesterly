@@ -1,29 +1,48 @@
 import React, { useState, useEffect } from "react";
 import { List, ListItem, ListItemText, Button, TextField, Box } from "@mui/material";
 
+interface User {
+  name: string;
+}
+
+interface UsersListProps {
+  users: User[];
+}
+
 const users = [{ name: "Kiron Deb" }, { name: "Jacky Wang" }];
 
-/**
- * This is the modal that pops up when a new news post has been published. It displays
- * the text of the news post, which is created and edited in the Django admin panel.
- */
-const FindNewFriends = () => {
+const UsersListWithSearch = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+
+  useEffect(() => {
+    if (searchTerm === "") {
+      setFilteredUsers([]);
+      setIsSearching(false);
+      return null;
+    }
+
+    const delayDebounceFn = setTimeout(() => {
+      // Send Axios request here
+      setFilteredUsers(
+        users.filter((user) =>
+          user.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+      setIsSearching(false);
+    }, 500); // 500 ms delay
+
+    setIsSearching(true);
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const sendFriendRequest = () => {
-    console.log("Send friend request");
-  };
-
   return (
-    <Box className="modal-content">
+    <Box>
       <TextField
         fullWidth
         label="Search Users"
@@ -32,25 +51,29 @@ const FindNewFriends = () => {
         onChange={handleSearchChange}
         margin="normal"
       />
-      <List>
-        {filteredUsers.map((user, index) => (
-          <ListItem
-            key={user.name}
-            style={{ display: "flex", justifyContent: "space-between" }}
-          >
-            <ListItemText primary={user.name} />
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={() => sendFriendRequest()}
+      {isSearching && searchTerm !== "" ? (
+        <div>Searching...</div>
+      ) : (
+        <List>
+          {filteredUsers.map((user, index) => (
+            <ListItem
+              key={user.name}
+              style={{ display: "flex", justifyContent: "space-between" }}
             >
-              Send Request
-            </Button>
-          </ListItem>
-        ))}
-      </List>
+              <ListItemText primary={user.name} />
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => console.log("Remove friend functionality here")}
+              >
+                Remove Friend
+              </Button>
+            </ListItem>
+          ))}
+        </List>
+      )}
     </Box>
   );
 };
 
-export default FindNewFriends;
+export default UsersListWithSearch;
