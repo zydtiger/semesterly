@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { List, ListItem, ListItemText, Button, TextField, Box } from "@mui/material";
+import {
+  List,
+  ListItem,
+  ListItemText,
+  Button,
+  TextField,
+  Box,
+  CircularProgress,
+  Typography,
+} from "@mui/material";
 
 interface User {
   name: string;
@@ -52,9 +61,9 @@ const FindNewFriends = () => {
         margin="normal"
       />
       {isSearching && searchTerm !== "" ? (
-        <div>Searching...</div>
-      ) : (
-        <List>
+        <CircularProgress />
+      ) : filteredUsers.length > 0 ? (
+        <List className="modal-content">
           {filteredUsers.map((user, index) => (
             <ListItem
               key={user.name}
@@ -71,6 +80,10 @@ const FindNewFriends = () => {
             </ListItem>
           ))}
         </List>
+      ) : (
+        <Typography style={{ textAlign: "center", marginTop: "20px" }}>
+          No users found
+        </Typography>
       )}
     </Box>
   );
