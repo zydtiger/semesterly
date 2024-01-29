@@ -21,7 +21,7 @@ import { userInfoActions } from "../../state/slices";
 import { peerModalActions } from "../../state/slices/peerModalSlice";
 import { selectSlotColorData } from "../../state/slices/themeSlice";
 import { parseInstructors } from "../CourseModalSection";
-import { Box, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Tab, Tabs } from "@mui/material";
 import RequestsReceived from "./PeerModalComponents/RequestsReceived";
 import FindNewFriends from "./PeerModalComponents/FindNewFriends";
 import CurrentFriends from "./PeerModalComponents/CurrentFriends";

@@ -20,7 +20,7 @@ const FindNewFriends = () => {
     if (searchTerm === "") {
       setFilteredUsers([]);
       setIsSearching(false);
-      return null;
+      return;
     }
 
     const delayDebounceFn = setTimeout(() => {
