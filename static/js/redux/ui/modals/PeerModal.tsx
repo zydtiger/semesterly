@@ -112,10 +112,10 @@ const PeerModal = () => {
   const isLoading = useAppSelector((state) => state.peerModal.isLoading);
   const isVisible = useAppSelector((state) => state.peerModal.isVisible);
   const slotColorData = useAppSelector(selectSlotColorData);
-  const [value, setValue] = useState(0);
+  const [tab, setTab] = useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
+    setTab(newValue);
   };
 
   useEffect(() => {
@@ -301,7 +301,7 @@ const PeerModal = () => {
       >
         {value === index && (
           <Box sx={{ p: 3 }}>
-            <Typography>{children}</Typography>
+            <div>{children}</div>
           </Box>
         )}
       </div>
@@ -321,7 +321,7 @@ const PeerModal = () => {
         <Tabs
           orientation="vertical"
           variant="fullWidth"
-          value={value}
+          value={tab || false}
           onChange={handleChange}
           aria-label="Vertical tabs example"
           sx={{ borderRight: 1, borderColor: "divider" }}
@@ -333,22 +333,22 @@ const PeerModal = () => {
           <Tab label="Requests Sent" {...a11yProps(4)} />
           <Tab label="Friend Courses" {...a11yProps(5)} />
         </Tabs>
-        <TabPanel value={value} index={0}>
+        <TabPanel value={tab} index={0}>
           {display}
         </TabPanel>
-        <TabPanel value={value} index={1}>
+        <TabPanel value={tab} index={1}>
           <FindNewFriends />
         </TabPanel>
-        <TabPanel value={value} index={2}>
+        <TabPanel value={tab} index={2}>
           <CurrentFriends />
         </TabPanel>
-        <TabPanel value={value} index={3}>
+        <TabPanel value={tab} index={3}>
           <RequestsReceived />
         </TabPanel>
-        <TabPanel value={value} index={4}>
+        <TabPanel value={tab} index={4}>
           <RequestsSent />
         </TabPanel>
-        <TabPanel value={value} index={5}>
+        <TabPanel value={tab} index={5}>
           <FriendsCourses />
         </TabPanel>
       </Box>

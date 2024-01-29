@@ -11,7 +11,7 @@ interface UsersListProps {
 
 const users = [{ name: "Kiron Deb" }, { name: "Jacky Wang" }];
 
-const UsersListWithSearch = () => {
+const FindNewFriends = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -76,4 +76,4 @@ const UsersListWithSearch = () => {
   );
 };
 
-export default UsersListWithSearch;
+export default FindNewFriends;
