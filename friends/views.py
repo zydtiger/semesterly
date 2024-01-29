@@ -1,12 +1,17 @@
 from django.shortcuts import render
 from student.models import Student
 from friends.models import FriendRequest
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from django.core import serializers
+
 
 def search_friends(request, query):
     # Assuming you have a Friend model, modify this query as needed
     friends = Student.objects.filter(preferred_name__icontains=query)
-    return HttpResponse(friends)
+    friends_json = serializers.serialize('json', friends)
+
+    # Return the JSON response
+    return JsonResponse(friends_json, safe=False)
 
 
 def send_friend_request(request, userId):
