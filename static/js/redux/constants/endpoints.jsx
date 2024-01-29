@@ -41,6 +41,10 @@ export const getMostClassmatesCountEndpoint = (semester, courses) =>
   })}`;
 export const getFriendsEndpoint = (semester) =>
   `/user/classmates/${semester.name}/${semester.year}/`;
+
+// Friends endpoints
+export const getSearchFriendsEndpoint = (query) => `/friends/search/${query}`;
+
 export const getSchoolInfoEndpoint = (school) => `/school/${school}/`;
 export const getReactToCourseEndpoint = () => "/user/reactions/";
 export const getRequestShareTimetableLinkEndpoint = () => "/timetables/links/";

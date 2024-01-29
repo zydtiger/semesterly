@@ -2,7 +2,13 @@ from django.shortcuts import render
 from student.models import Student
 from friends.models import FriendRequest
 from django.http import HttpResponse
-# Create your views here.
+
+def search_friends(request, query):
+    # Assuming you have a Friend model, modify this query as needed
+    friends = Student.objects.filter(preferred_name__icontains=query)
+    return HttpResponse(friends)
+
+
 def send_friend_request(request, userId):
     from_user = request.user
     from_student = Student.objects.get(user=from_user)

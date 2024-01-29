@@ -9,6 +9,7 @@ import {
   CircularProgress,
   Typography,
 } from "@mui/material";
+import { getSearchFriendsEndpoint } from "../../../constants/endpoints";
 
 interface User {
   name: string;
@@ -32,8 +33,12 @@ const FindNewFriends = () => {
       return;
     }
 
-    const delayDebounceFn = setTimeout(() => {
+    const delayDebounceFn = setTimeout(async () => {
       // Send Axios request here
+      const response = await fetch(getSearchFriendsEndpoint(searchTerm));
+      const data = await response.json();
+      console.log(data);
+
       setFilteredUsers(
         users.filter((user) =>
           user.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -73,9 +78,9 @@ const FindNewFriends = () => {
               <Button
                 variant="contained"
                 color="secondary"
-                onClick={() => console.log("Remove friend functionality here")}
+                onClick={() => console.log("Send friend request functionality")}
               >
-                Remove Friend
+                Send Request
               </Button>
             </ListItem>
           ))}
