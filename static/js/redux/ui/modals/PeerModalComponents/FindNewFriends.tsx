@@ -25,6 +25,7 @@ const FindNewFriends = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [requestStatus, setRequestStatus] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     if (searchTerm === "") {
@@ -55,6 +56,25 @@ const FindNewFriends = () => {
     setSearchTerm(event.target.value);
   };
 
+  const handleSendRequest = (userName: string) => {
+    // Simulating request sending, update the state to indicate the request is being sent
+    setRequestStatus((prevStatus) => ({
+      ...prevStatus,
+      [userName]: true,
+    }));
+
+    // Simulate API call for sending friend request
+    setTimeout(() => {
+      // Assuming the request is successful, update the state to indicate the request is sent
+      setRequestStatus((prevStatus) => ({
+        ...prevStatus,
+        [userName]: false,
+      }));
+
+      // Additional logic as needed (e.g., showing a success message)
+    }, 2000); // Simulating a 2-second delay, adjust as needed
+  };
+
   return (
     <Box>
       <TextField
@@ -78,9 +98,10 @@ const FindNewFriends = () => {
               <Button
                 variant="contained"
                 color="secondary"
-                onClick={() => console.log("Send friend request functionality")}
+                onClick={() => handleSendRequest(user.name)}
+                disabled={requestStatus[user.name]}
               >
-                Send Request
+                {requestStatus[user.name] ? "Sending..." : "Send Request"}
               </Button>
             </ListItem>
           ))}
