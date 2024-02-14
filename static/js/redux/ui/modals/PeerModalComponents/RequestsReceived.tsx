@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { List, ListItem, ListItemText, Button } from "@mui/material";
+import { List, ListItem, ListItemText, Button, Grid } from "@mui/material";
 
 const users = [{ name: "Kiron Deb" }, { name: "Jacky Wang" }];
 
@@ -23,21 +23,29 @@ const RequestsReceived = () => {
           key={user.name}
           style={{ display: "flex", justifyContent: "space-between" }}
         >
-          <ListItemText primary={user.name} />
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => acceptFriendRequest()}
-          >
-            Accept
-          </Button>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => ignoreFriendRequest()}
-          >
-            Ignore
-          </Button>
+          <Grid container spacing={2}>
+            <Grid item xs={2}>
+              <ListItemText primary={user.name} />
+            </Grid>
+            <Grid item>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => acceptFriendRequest()}
+              >
+                Accept
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => ignoreFriendRequest()}
+              >
+                Ignore
+              </Button>
+            </Grid>
+          </Grid>
         </ListItem>
       ))}
     </List>

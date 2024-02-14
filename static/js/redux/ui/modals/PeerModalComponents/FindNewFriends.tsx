@@ -25,7 +25,7 @@ const FindNewFriends = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [requestStatus, setRequestStatus] = useState<{ [key: string]: boolean }>({});
+  const [requestSent, setRequestSent] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     if (searchTerm === "") {
@@ -56,23 +56,14 @@ const FindNewFriends = () => {
     setSearchTerm(event.target.value);
   };
 
-  const handleSendRequest = (userName: string) => {
+  const handleSendOrWithdrawRequest = (userName: string) => {
     // Simulating request sending, update the state to indicate the request is being sent
-    setRequestStatus((prevStatus) => ({
+    setRequestSent((prevStatus) => ({
       ...prevStatus,
-      [userName]: true,
+      [userName]: !prevStatus[userName],
     }));
 
     // Simulate API call for sending friend request
-    setTimeout(() => {
-      // Assuming the request is successful, update the state to indicate the request is sent
-      setRequestStatus((prevStatus) => ({
-        ...prevStatus,
-        [userName]: false,
-      }));
-
-      // Additional logic as needed (e.g., showing a success message)
-    }, 2000); // Simulating a 2-second delay, adjust as needed
   };
 
   return (
@@ -97,11 +88,10 @@ const FindNewFriends = () => {
               <ListItemText primary={user.name} />
               <Button
                 variant="contained"
-                color="secondary"
-                onClick={() => handleSendRequest(user.name)}
-                disabled={requestStatus[user.name]}
+                color={requestSent[user.name] ? "primary" : "secondary"}
+                onClick={() => handleSendOrWithdrawRequest(user.name)}
               >
-                {requestStatus[user.name] ? "Sending..." : "Send Request"}
+                {requestSent[user.name] ? "Withdraw Request" : "Send Request"}
               </Button>
             </ListItem>
           ))}
