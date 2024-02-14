@@ -11,40 +11,40 @@ import {
 } from "@mui/material";
 import { getSearchFriendsEndpoint } from "../../../constants/endpoints";
 
-interface User {
-  name: string;
+interface SearchResultUser {
+  email: string;
+  first_name: string;
+  last_name: string;
+  img_url: string;
+  username: string;
 }
-
-interface UsersListProps {
-  users: User[];
-}
-
-const users = [{ name: "Kiron Deb" }, { name: "Jacky Wang" }];
 
 const FindNewFriends = () => {
+  const [searchResults, setSearchResults] = useState<SearchResultUser[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [requestSent, setRequestSent] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     if (searchTerm === "") {
-      setFilteredUsers([]);
+      setSearchResults([]);
       setIsSearching(false);
       return;
     }
 
     const delayDebounceFn = setTimeout(async () => {
-      // Send Axios request here
-      const response = await fetch(getSearchFriendsEndpoint(searchTerm));
-      const data = await response.json();
-      console.log(data);
+      /**
+       * Example response:
+       * [ { email: "kirondeb02@gmail.com", first_name: "Kiron", last_name: "Deb",
+       *     img_url: "https://lh3.googleusercontent.com/a/ACg8ocJTtumXV_mOMdhpxSaKeV7R,
+       *     username: "kirondeb02"  } ]
+       */
 
-      setFilteredUsers(
-        users.filter((user) =>
-          user.name.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      );
+      const response = await fetch(getSearchFriendsEndpoint(searchTerm));
+      const responseJson = await response.json();
+      console.log(responseJson);
+      setSearchResults(responseJson);
+
       setIsSearching(false);
     }, 500); // 500 ms delay
 
@@ -78,20 +78,20 @@ const FindNewFriends = () => {
       />
       {isSearching && searchTerm !== "" ? (
         <CircularProgress />
-      ) : filteredUsers.length > 0 ? (
+      ) : searchResults.length > 0 ? (
         <List className="modal-content">
-          {filteredUsers.map((user, index) => (
+          {searchResults.map((user) => (
             <ListItem
-              key={user.name}
+              key={user.email}
               style={{ display: "flex", justifyContent: "space-between" }}
             >
-              <ListItemText primary={user.name} />
+              <ListItemText primary={`${user.first_name} ${user.last_name}`} />
               <Button
                 variant="contained"
-                color={requestSent[user.name] ? "primary" : "secondary"}
-                onClick={() => handleSendOrWithdrawRequest(user.name)}
+                color={requestSent[user.username] ? "primary" : "secondary"}
+                onClick={() => handleSendOrWithdrawRequest(user.username)}
               >
-                {requestSent[user.name] ? "Withdraw Request" : "Send Request"}
+                {requestSent[user.username] ? "Withdraw Request" : "Send Request"}
               </Button>
             </ListItem>
           ))}

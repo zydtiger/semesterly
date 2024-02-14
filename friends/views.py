@@ -4,20 +4,26 @@ from friends.models import FriendRequest
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
 from django.db.models import Q
-
+from django.contrib.auth.models import User
 
 
 def search_friends(request, query):
-    friends = Student.objects.filter(
-        Q(user__first_name__icontains=query) |
-        Q(user__last_name__icontains=query) |
-        Q(user__username__icontains=query)
-    )
-    friends_json = serializers.serialize('json', friends)
-    print(friends_json)
-
-    # Return the JSON response
-    return JsonResponse(friends_json, safe=False)
+    # Query users and prefetch related Student objects in a single query
+    users_with_students = User.objects.filter(
+        Q(first_name__icontains=query) |
+        Q(last_name__icontains=query) |
+        Q(username__icontains=query)
+    ).select_related('student').only('email', 'first_name', 'last_name', 'username', 'student__img_url')
+    friends = [
+        {
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'username': user.username,
+            'img_url': getattr(user.student, 'img_url', None)  # Safely get img_url or None if student does not exist
+        } for user in users_with_students if hasattr(user, 'student')
+    ]
+    return JsonResponse(friends, safe=False)
 
 
 def send_friend_request(request, userId):
