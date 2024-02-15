@@ -1,8 +1,11 @@
 from django.urls import path
-from friends.views import send_friend_request, accept_friend_request, reject_friend_request, search_friends
+from friends.views import send_friend_request, withdraw_friend_request, accept_friend_request, reject_friend_request, search_friends, requests_sent
 urlpatterns = [
-path('send_friend_request/<int:userId>/', send_friend_request, name="send friend request"),
-path('accept_friend_request/<int:friendRequestId>/', accept_friend_request, name="accept friend request"),
-path('reject_friend_request/<int:friendRequestId>/', reject_friend_request, name="reject friend request"),
+path('friends/send_request/<int:userId>', send_friend_request, name="send friend request"),
+path('friends/withdraw_request/<int:userId>', withdraw_friend_request, name="withdraw friend request"),
+path('friends/requests_sent', requests_sent, name="friend requests sent"),
+path('friends/requests_received', send_friend_request, name="friend requests received"),
+path('friends/accept_request/<int:friendRequestId>/', accept_friend_request, name="accept friend request"),
+path('friends/reject_request/<int:friendRequestId>/', reject_friend_request, name="reject friend request"),
 path('friends/search/<str:query>', search_friends, name="search friends"),
 ]

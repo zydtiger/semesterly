@@ -44,6 +44,12 @@ export const getFriendsEndpoint = (semester) =>
 
 // Friends endpoints
 export const getSearchFriendsEndpoint = (query) => `/friends/search/${query}`;
+export const getSendFriendRequestEndpoint = (userId) =>
+  `/friends/send_request/${userId}`;
+export const getWithdrawFriendRequestEndpoint = (userId) =>
+  `/friends/withdraw_request/${userId}`;
+export const getFriendRequestsSentEndpoint = () => `/friends/requests_sent`;
+export const getFriendRequestsReceivedEndpoint = () => `friends/requests_received`;
 
 export const getSchoolInfoEndpoint = (school) => `/school/${school}/`;
 export const getReactToCourseEndpoint = () => "/user/reactions/";

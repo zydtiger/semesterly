@@ -9,7 +9,12 @@ import {
   CircularProgress,
   Typography,
 } from "@mui/material";
-import { getSearchFriendsEndpoint } from "../../../constants/endpoints";
+import {
+  getSearchFriendsEndpoint,
+  getSendFriendRequestEndpoint,
+  getWithdrawFriendRequestEndpoint,
+} from "../../../constants/endpoints";
+import Cookie from "js-cookie";
 
 interface SearchResultUser {
   email: string;
@@ -17,6 +22,7 @@ interface SearchResultUser {
   last_name: string;
   img_url: string;
   username: string;
+  userId: string;
 }
 
 const FindNewFriends = () => {
@@ -37,12 +43,11 @@ const FindNewFriends = () => {
        * Example response:
        * [ { email: "kirondeb02@gmail.com", first_name: "Kiron", last_name: "Deb",
        *     img_url: "https://lh3.googleusercontent.com/a/ACg8ocJTtumXV_mOMdhpxSaKeV7R,
-       *     username: "kirondeb02"  } ]
+       *     username: "kirondeb02", userId: 1  } ]
        */
 
       const response = await fetch(getSearchFriendsEndpoint(searchTerm));
       const responseJson = await response.json();
-      console.log(responseJson);
       setSearchResults(responseJson);
 
       setIsSearching(false);
@@ -56,14 +61,35 @@ const FindNewFriends = () => {
     setSearchTerm(event.target.value);
   };
 
-  const handleSendOrWithdrawRequest = (userName: string) => {
+  const handleSendOrWithdrawRequest = async (userId: string) => {
+    if (!requestSent[userId]) {
+      // send request
+      await fetch(getSendFriendRequestEndpoint(userId), {
+        headers: {
+          "X-CSRFToken": Cookie.get("csrftoken"),
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        credentials: "include",
+      });
+    } else {
+      // withdraw request
+      await fetch(getWithdrawFriendRequestEndpoint(userId), {
+        headers: {
+          "X-CSRFToken": Cookie.get("csrftoken"),
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        credentials: "include",
+      });
+    }
     // Simulating request sending, update the state to indicate the request is being sent
     setRequestSent((prevStatus) => ({
       ...prevStatus,
-      [userName]: !prevStatus[userName],
+      [userId]: !prevStatus[userId],
     }));
-
-    // Simulate API call for sending friend request
   };
 
   return (
@@ -82,16 +108,16 @@ const FindNewFriends = () => {
         <List className="modal-content">
           {searchResults.map((user) => (
             <ListItem
-              key={user.email}
+              key={user.userId}
               style={{ display: "flex", justifyContent: "space-between" }}
             >
               <ListItemText primary={`${user.first_name} ${user.last_name}`} />
               <Button
                 variant="contained"
-                color={requestSent[user.username] ? "primary" : "secondary"}
-                onClick={() => handleSendOrWithdrawRequest(user.username)}
+                color={requestSent[user.userId] ? "primary" : "secondary"}
+                onClick={() => handleSendOrWithdrawRequest(user.userId)}
               >
-                {requestSent[user.username] ? "Withdraw Request" : "Send Request"}
+                {requestSent[user.userId] ? "Withdraw Request" : "Send Request"}
               </Button>
             </ListItem>
           ))}

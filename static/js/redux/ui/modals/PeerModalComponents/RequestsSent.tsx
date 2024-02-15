@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { List, ListItem, ListItemText, Button } from "@mui/material";
+import { getFriendRequestsSentEndpoint } from "../../../constants/endpoints";
 
 const users = [{ name: "Kiron Deb" }, { name: "Jacky Wang" }];
 
@@ -8,18 +9,30 @@ const users = [{ name: "Kiron Deb" }, { name: "Jacky Wang" }];
  * the text of the news post, which is created and edited in the Django admin panel.
  */
 const RequestsSent = () => {
+  const [usersRequested, setUsersRequested] = useState([]);
+
+  useEffect(() => {
+    const getFriendRequestsSent = async () => {
+      const response = await fetch(getFriendRequestsSentEndpoint());
+      const responseJson = await response.json();
+      console.log(responseJson);
+      setUsersRequested(responseJson);
+    };
+    getFriendRequestsSent();
+  }, []);
+  
   const withdrawFriendRequest = () => {
     console.log("withdraw friend request");
   };
 
   return (
     <List className="modal-content">
-      {users.map((user, index) => (
+      {usersRequested.map((user) => (
         <ListItem
-          key={user.name}
+          key={user.username}
           style={{ display: "flex", justifyContent: "space-between" }}
         >
-          <ListItemText primary={user.name} />
+          <ListItemText primary={`${user.first_name} ${user.last_name}`} />
           <Button
             variant="contained"
             color="secondary"

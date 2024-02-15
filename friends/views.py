@@ -5,6 +5,7 @@ from django.http import HttpResponse, JsonResponse
 from django.core import serializers
 from django.db.models import Q
 from django.contrib.auth.models import User
+import json
 
 
 def search_friends(request, query):
@@ -15,7 +16,8 @@ def search_friends(request, query):
         Q(username__icontains=query)
     ).select_related('student').only('email', 'first_name', 'last_name', 'username', 'student__img_url')
     friends = [
-        {
+        {   
+            'userId': user.id,
             'email': user.email,
             'first_name': user.first_name,
             'last_name': user.last_name,
@@ -27,15 +29,53 @@ def search_friends(request, query):
 
 
 def send_friend_request(request, userId):
-    from_user = request.user
-    from_student = Student.objects.get(user=from_user)
-    to_student = Student.objects.get(user_id=userId)
+    from_username = request.user
+    from_student = Student.objects.get(user__username=from_username)
+    to_student = Student.objects.get(user__id=userId)
+    print('hahahahhahahah')
+    print(from_username, userId)
+    print(from_student, to_student)
     friend_request , created = FriendRequest.objects.get_or_create(from_friend=from_student, to_friend=to_student)
  
     if created:
-        return HttpResponse('Friend request created', 200)
+        return HttpResponse('Friend request created', 201)
     else:
         return HttpResponse('Friend request failed', 400)
+    
+# Gets all users the logged in users sent a friend request to
+def requests_sent(request):
+    from_username = request.user.username
+    from_student = Student.objects.get(user__username=from_username)
+    friend_requests = FriendRequest.objects.filter(from_friend=from_student)
+    
+    to_student_ids = friend_requests.values_list('to_friend__user', flat=True)
+    requests_sent_users = User.objects.filter(id__in=to_student_ids).select_related('student')
+    friends = [
+        {   
+            'userId': user.id,
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'username': user.username,
+            'img_url': getattr(user.student, 'img_url', None)  # Safely get img_url or None if student does not exist
+        } for user in requests_sent_users
+    ]
+
+    return JsonResponse(friends, safe=False)
+
+
+def withdraw_friend_request(request, userId):
+    from_username = request.user
+    from_student = Student.objects.get(user__username=from_username)
+    to_student = Student.objects.get(user__id=userId)
+    # Attempt to retrieve the existing friend request
+    try:
+        friend_request = FriendRequest.objects.get(from_friend=from_student, to_friend=to_student)
+        friend_request.delete()
+        return HttpResponse('Friend request withdrawn', 200)
+    except FriendRequest.DoesNotExist:
+        # If no friend request exists, return an error message
+        return HttpResponse('No friend request exists to withdraw', 400)
     
 def accept_friend_request(request, friendRequestId):
     friend_request = FriendRequest.objects.get(id=friendRequestId)
