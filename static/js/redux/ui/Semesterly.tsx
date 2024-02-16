@@ -153,7 +153,7 @@ const Semesterly = () => {
     ];
 
     let dayEnding: String;
-    const curDay = curDate.getDay();
+    const curDay = curDate.getUTCDate();
     if (curDay >= 11 && curDay <= 13) {
       dayEnding = "th";
     }
@@ -176,7 +176,7 @@ const Semesterly = () => {
 
     return `${
       months[monthIndex]
-    } ${curDate.getUTCDate()}${dayEnding}, ${curDate.getFullYear()}`;
+    } ${curDay}${dayEnding}, ${curDate.getFullYear()}`;
   };
 
   const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
