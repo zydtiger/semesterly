@@ -40,6 +40,7 @@ import { startComparingTimetables } from "../state/slices/compareTimetableSlice"
 import AvgCourseRating from "./AvgCourseRating";
 import { selectSlotColorData, selectTheme } from "../state/slices/themeSlice";
 import { peerModalActions } from "../state/slices/peerModalSlice";
+import CreateNewTimetableButton from "./CreateNewTimetableButton";
 
 /**
  * This component displays the timetable name, allows you to switch between timetables,
@@ -253,6 +254,7 @@ const SideBar = () => {
             <div className="tip" />
             <h4>{`${semester.name} ${semester.year}`}</h4>
             {savedTimetables}
+            <CreateNewTimetableButton />
           </div>
         </ClickOutHandler>
       </div>
