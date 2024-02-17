@@ -272,21 +272,6 @@ const Calendar = (props: CalendarProps) => {
     />
   ) : null;
 
-  const addNewTimetableButton = (
-    <div className="cal-btn-wrapper">
-      <Tooltip title={<Typography fontSize={12}>New Timetable</Typography>}>
-        <button
-          onClick={() => props.handleCreateNewTimetable()}
-          className="save-timetable add-button"
-          data-tip
-          data-for="add-btn-tooltip"
-        >
-          <i className="fa fa-plus" />
-        </button>
-      </Tooltip>
-    </div>
-  );
-
   const toggleCustomEventModeButton = (
     <div className="cal-btn-wrapper">
       <Tooltip title={<Typography fontSize={12}>Add Custom Event</Typography>}>
@@ -334,7 +319,6 @@ const Calendar = (props: CalendarProps) => {
       {toggleCustomEventModeButton}
       {shareButton}
       {shareLink}
-      {addNewTimetableButton}
       {saveToCalendarButton}
       <ShowWeekendsSwitch isMobile={false} />
     </>
