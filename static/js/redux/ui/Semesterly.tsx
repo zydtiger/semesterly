@@ -174,9 +174,7 @@ const Semesterly = () => {
 
     const monthIndex: number = curDate.getMonth();
 
-    return `${
-      months[monthIndex]
-    } ${curDay}${dayEnding}, ${curDate.getFullYear()}`;
+    return `${months[monthIndex]} ${curDay}${dayEnding}, ${curDate.getFullYear()}`;
   };
 
   const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
