@@ -44,7 +44,6 @@ interface CalendarProps {
   triggerSaveCalendarModal: Function;
   isFetchingShareLink: boolean;
   endHour: number;
-  handleCreateNewTimetable: Function;
   shareLinkValid: boolean;
   fetchSISTimetableData: Function;
   fetchShareTimetableLink: Function;

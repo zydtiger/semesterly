@@ -254,7 +254,7 @@ const SideBar = () => {
             <div className="tip" />
             <h4>{`${semester.name} ${semester.year}`}</h4>
             {savedTimetables}
-            <CreateNewTimetableButton />
+            <CreateNewTimetableButton setSidebarDropdown={setShowDropdown} />
           </div>
         </ClickOutHandler>
       </div>
