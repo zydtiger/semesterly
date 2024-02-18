@@ -41,6 +41,8 @@ import AvgCourseRating from "./AvgCourseRating";
 import { selectSlotColorData, selectTheme } from "../state/slices/themeSlice";
 import { peerModalActions } from "../state/slices/peerModalSlice";
 import CreateNewTimetableButton from "./CreateNewTimetableButton";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
 
 /**
  * This component displays the timetable name, allows you to switch between timetables,
@@ -78,6 +80,8 @@ const SideBar = () => {
   const [hoveredCourse, setHoveredCourse] = useState(-1);
   const [masterSlotListLength, setMasterSlotListLength] = useState(0);
 
+  const [tooltip, setTooltip] = useState(" ");
+
   const hideDropdown = () => {
     setShowDropdown(false);
 
@@ -112,6 +116,12 @@ const SideBar = () => {
                 event
               )
             }
+            onMouseEnter={() => {
+              setTooltip("Delete");
+            }}
+            onMouseLeave={() => {
+              setTooltip(" ");
+            }}
             className="row-button"
           >
             <i className="fa fa-trash-o" />
@@ -120,6 +130,12 @@ const SideBar = () => {
             onClick={(event) =>
               stopPropagation(() => dispatch(duplicateTimetable(t)), event)
             }
+            onMouseEnter={() => {
+              setTooltip("Duplicate");
+            }}
+            onMouseLeave={() => {
+              setTooltip(" ");
+            }}
             className="row-button"
           >
             <i className="fa fa-clone" />
@@ -135,6 +151,12 @@ const SideBar = () => {
                   })
                 );
                 event.stopPropagation();
+              }}
+              onMouseEnter={() => {
+                setTooltip("Compare");
+              }}
+              onMouseLeave={() => {
+                setTooltip(" ");
               }}
               className="row-button"
             >
@@ -252,7 +274,14 @@ const SideBar = () => {
           >
             <div className="tip-border" />
             <div className="tip" />
-            <h4>{`${semester.name} ${semester.year}`}</h4>
+
+            <div className="tt-top-row">
+              <h4>{`${semester.name} ${semester.year}`}</h4>
+              <div className="tt-tooltip-container">
+                <p className="tt-tooltip-text">{tooltip}</p>
+              </div>
+            </div>
+
             {savedTimetables}
             <CreateNewTimetableButton setSidebarDropdown={setShowDropdown} />
           </div>

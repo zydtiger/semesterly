@@ -132,6 +132,26 @@
   transition: background-color 0.3s;
 }
 
+.tt-tooltip-container {
+  display: block;
+  height: 15px;
+  margin-right: 7px;
+}
+
+.tt-tooltip-text {
+  color: $g777;
+  font-size: 10px;
+  font-style: italic;
+  margin: 0;
+  padding: 10px 5px 5px 10px;
+}
+
+.tt-top-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 .sb-header {
   clear: both;
   color: $g777;
