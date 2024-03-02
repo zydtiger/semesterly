@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { List, ListItem, ListItemText, Button, Grid } from "@mui/material";
 import { getFriendRequestsReceivedEndpoint } from "../../../constants/endpoints";
-
+import { User } from "./Types";
 
 /**
  * This is the modal that pops up when a new news post has been published. It displays
  * the text of the news post, which is created and edited in the Django admin panel.
  */
 const RequestsReceived = () => {
-  const [usersRequesting, setUsersRequesting] = useState([]);
+  const [usersRequesting, setUsersRequesting] = useState<User[]>([]);
 
   useEffect(() => {
     const getFriendRequestsSent = async () => {
@@ -29,36 +29,42 @@ const RequestsReceived = () => {
 
   return (
     <List className="modal-content">
-      {usersRequesting.map((user) => (
-        <ListItem
-          key={user.username}
-          style={{ display: "flex", justifyContent: "space-between" }}
-        >
-          <Grid container spacing={2}>
-            <Grid item xs={2}>
-              <ListItemText primary={`${user.first_name} ${user.last_name} `} />
-            </Grid>
-            <Grid item>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={() => acceptFriendRequest()}
-              >
-                Accept
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={() => ignoreFriendRequest()}
-              >
-                Ignore
-              </Button>
-            </Grid>
-          </Grid>
+      {usersRequesting.length === 0 ? (
+        <ListItem style={{ display: "flex", justifyContent: "center" }}>
+          No requests received
         </ListItem>
-      ))}
+      ) : (
+        usersRequesting.map((user) => (
+          <ListItem
+            key={user.username}
+            style={{ display: "flex", justifyContent: "space-between" }}
+          >
+            <Grid container spacing={2}>
+              <Grid item xs={2}>
+                <ListItemText primary={`${user.first_name} ${user.last_name} `} />
+              </Grid>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => acceptFriendRequest()}
+                >
+                  Accept
+                </Button>
+              </Grid>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => ignoreFriendRequest()}
+                >
+                  Ignore
+                </Button>
+              </Grid>
+            </Grid>
+          </ListItem>
+        ))
+      )}
     </List>
   );
 };

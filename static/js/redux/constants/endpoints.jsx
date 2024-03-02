@@ -43,6 +43,7 @@ export const getFriendsEndpoint = (semester) =>
   `/user/classmates/${semester.name}/${semester.year}/`;
 
 // Friends endpoints
+export const getFetchFriendsEndpointEndpoint = () => `/friends/`;
 export const getSearchFriendsEndpoint = (query) => `/friends/search/${query}`;
 export const getSendFriendRequestEndpoint = (userId) =>
   `/friends/send_request/${userId}`;

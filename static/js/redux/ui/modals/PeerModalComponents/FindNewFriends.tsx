@@ -15,18 +15,10 @@ import {
   getWithdrawFriendRequestEndpoint,
 } from "../../../constants/endpoints";
 import Cookie from "js-cookie";
-
-interface SearchResultUser {
-  email: string;
-  first_name: string;
-  last_name: string;
-  img_url: string;
-  username: string;
-  userId: string;
-}
+import { User } from "./Types";
 
 const FindNewFriends = () => {
-  const [searchResults, setSearchResults] = useState<SearchResultUser[]>([]);
+  const [searchResults, setSearchResults] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [requestSent, setRequestSent] = useState<{ [key: string]: boolean }>({});

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { List, ListItem, ListItemText, Button } from "@mui/material";
+import { getFetchFriendsEndpointEndpoint } from "../../../constants/endpoints";
 
 const users = [{ name: "Kiron Deb" }, { name: "Jacky Wang" }];
 /**
@@ -7,9 +8,20 @@ const users = [{ name: "Kiron Deb" }, { name: "Jacky Wang" }];
  * the text of the news post, which is created and edited in the Django admin panel.
  */
 const CurrentFriends = () => {
+  const [friends, setFriends] = useState([]);
   const removeFriend = () => {
     console.log("Remove friend functionality here");
   };
+
+  useEffect(() => {
+    const getFriends = async () => {
+      const response = await fetch(getFetchFriendsEndpointEndpoint());
+      const responseJson = await response.json();
+      console.log(responseJson);
+      setFriends(responseJson);
+    };
+    getFriends();
+  }, []);
 
   return (
     <List className="modal-content">

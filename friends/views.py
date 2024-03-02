@@ -5,7 +5,22 @@ from django.http import HttpResponse, JsonResponse
 from django.core import serializers
 from django.db.models import Q
 from django.contrib.auth.models import User
-import json
+from django.core.serializers import serialize
+
+
+def get_friends(request):
+    logged_in_username = request.user
+    logged_in_user = request.user
+    try:
+        logged_in_student = Student.objects.get(user=logged_in_user)
+    except Student.DoesNotExist:
+        return JsonResponse({'error': 'Student not found'}, status=404)
+
+    friends_queryset = logged_in_student.friends.all()
+
+    # Serialize the queryset to JSON format
+    friends_json = serialize('json', friends_queryset, fields=('preferred_name', 'class_year', 'user', 'img_url', 'major'))
+    return JsonResponse(friends_json, safe=False)
 
 
 def search_friends(request, query):
