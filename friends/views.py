@@ -57,48 +57,48 @@ def send_friend_request(request, userId):
     else:
         return HttpResponse('Friend request failed', 400)
     
-# Gets all users the logged in users sent a friend request to
+# Gets all users the logged in user sent a friend request to
 def requests_sent(request):
     from_username = request.user.username
     from_student = Student.objects.get(user__username=from_username)
-    friend_requests = FriendRequest.objects.filter(from_friend=from_student)
+    friend_requests = FriendRequest.objects.filter(from_friend=from_student).select_related('to_friend__user')
 
-    to_student_ids = friend_requests.values_list('to_friend__user', flat=True)
-    requests_sent_users = User.objects.filter(id__in=to_student_ids).select_related('student')
     friends = [
         {   
-            'userId': user.id,
-            'email': user.email,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-            'username': user.username,
-            'img_url': getattr(user.student, 'img_url', None)  # Safely get img_url or None if student does not exist
-        } for user in requests_sent_users
+            'friendRequestId': friend_request.id,  # Include the FriendRequest id
+            'userId': friend_request.to_friend.user.id,
+            'email': friend_request.to_friend.user.email,
+            'first_name': friend_request.to_friend.user.first_name,
+            'last_name': friend_request.to_friend.user.last_name,
+            'username': friend_request.to_friend.user.username,
+            'img_url': getattr(friend_request.to_friend, 'img_url', None)  # Safely get img_url or None if student does not exist
+        } for friend_request in friend_requests
     ]
 
     return JsonResponse(friends, safe=False)
+
 
 # Returns requests sent to the logged in user
 def requests_received(request):
     to_username = request.user.username
     to_student = Student.objects.get(user__username=to_username)
     # Get all requests sent to this student
-    friend_requests = FriendRequest.objects.filter(to_friend=to_student)
+    friend_requests = FriendRequest.objects.filter(to_friend=to_student).select_related('from_friend__user')
     
-    from_student_ids = friend_requests.values_list('from_friend__user', flat=True)
-    requests_sent_users = User.objects.filter(id__in=from_student_ids).select_related('student')
     friends = [
-        {   
-            'userId': user.id,
-            'email': user.email,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-            'username': user.username,
-            'img_url': getattr(user.student, 'img_url', None)  # Safely get img_url or None if student does not exist
-        } for user in requests_sent_users
+        {
+            'friendrequestId': friend_request.id,  # Include the FriendRequest ID
+            'userId': friend_request.from_friend.user.id,
+            'email': friend_request.from_friend.user.email,
+            'first_name': friend_request.from_friend.user.first_name,
+            'last_name': friend_request.from_friend.user.last_name,
+            'username': friend_request.from_friend.user.username,
+            'img_url': getattr(friend_request.from_friend, 'img_url', None)  # Safely get img_url or None
+        } for friend_request in friend_requests
     ]
 
     return JsonResponse(friends, safe=False)
+
 
 
 def withdraw_friend_request(request, userId):

@@ -14,6 +14,7 @@ const RequestsReceived = () => {
     const getFriendRequestsSent = async () => {
       const response = await fetch(getFriendRequestsReceivedEndpoint());
       const responseJson = await response.json();
+      console.log(responseJson);
       setUsersRequesting(responseJson);
     };
     getFriendRequestsSent();

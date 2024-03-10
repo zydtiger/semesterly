@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { List, ListItem, ListItemText, Button } from "@mui/material";
-import { getFriendRequestsSentEndpoint } from "../../../constants/endpoints";
+import {
+  getFriendRequestsSentEndpoint,
+  getWithdrawFriendRequestEndpoint,
+} from "../../../constants/endpoints";
 import { User } from "./Types";
+import Cookie from "js-cookie";
 
 /**
  * This is the modal that pops up when a new news post has been published. It displays
@@ -20,8 +24,19 @@ const RequestsSent = () => {
     getFriendRequestsSent();
   }, []);
 
-  const withdrawFriendRequest = () => {
+  const withdrawFriendRequest = async (userId: String) => {
     console.log("withdraw friend request");
+    await fetch(getWithdrawFriendRequestEndpoint(userId), {
+      headers: {
+        "X-CSRFToken": Cookie.get("csrftoken"),
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      credentials: "include",
+    });
+    const newUsersRequested = usersRequested.filter((user) => user.userId !== userId);
+    setUsersRequested(usersRequested.filter((user) => user.userId !== userId));
   };
 
   return (
@@ -40,7 +55,7 @@ const RequestsSent = () => {
             <Button
               variant="contained"
               color="secondary"
-              onClick={() => withdrawFriendRequest()}
+              onClick={() => withdrawFriendRequest(user.userId)}
             >
               Withdraw
             </Button>
