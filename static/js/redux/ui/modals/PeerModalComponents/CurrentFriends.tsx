@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { List, ListItem, ListItemText, Button } from "@mui/material";
-import { getFetchFriendsEndpointEndpoint } from "../../../constants/endpoints";
+import {
+  getFetchFriendsEndpointEndpoint,
+  getRemoveFriendEndpoint,
+} from "../../../constants/endpoints";
 import { User } from "./Types";
 
 /**
@@ -9,8 +12,10 @@ import { User } from "./Types";
  */
 const CurrentFriends = () => {
   const [friends, setFriends] = useState<User[]>([]);
-  const removeFriend = () => {
-    console.log("Remove friend functionality here");
+
+  const removeFriend = async (userId: string) => {
+    const response = await fetch(getRemoveFriendEndpoint(userId));
+    setFriends(friends.filter((friend) => friend.userId !== userId));
   };
 
   useEffect(() => {
@@ -26,17 +31,27 @@ const CurrentFriends = () => {
 
   return (
     <List className="modal-content">
-      {friends.map((friend) => (
-        <ListItem
-          key={friend.userId}
-          style={{ display: "flex", justifyContent: "space-between" }}
-        >
-          <ListItemText primary={friend.first_name + friend.last_name} />
-          <Button variant="contained" color="secondary" onClick={() => removeFriend()}>
-            Remove Friend
-          </Button>
+      {friends.length === 0 ? (
+        <ListItem style={{ display: "flex", justifyContent: "center" }}>
+          No friends
         </ListItem>
-      ))}
+      ) : (
+        friends.map((friend) => (
+          <ListItem
+            key={friend.userId}
+            style={{ display: "flex", justifyContent: "space-between" }}
+          >
+            <ListItemText primary={friend.first_name + friend.last_name} />
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => removeFriend(friend.userId)}
+            >
+              Remove Friend
+            </Button>
+          </ListItem>
+        ))
+      )}
     </List>
   );
 };

@@ -44,6 +44,7 @@ export const getFriendsEndpoint = (semester) =>
 
 // Friends endpoints
 export const getFetchFriendsEndpointEndpoint = () => `/friends/`;
+export const getRemoveFriendEndpoint = (userId) => `/friends/remove/${userId}`;
 export const getSearchFriendsEndpoint = (query) => `/friends/search/${query}`;
 export const getSendFriendRequestEndpoint = (userId) =>
   `/friends/send_request/${userId}`;

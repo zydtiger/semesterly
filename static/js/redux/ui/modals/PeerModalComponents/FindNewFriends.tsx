@@ -10,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import {
+  getFriendRequestsSentEndpoint,
   getSearchFriendsEndpoint,
   getSendFriendRequestEndpoint,
   getWithdrawFriendRequestEndpoint,
@@ -18,10 +19,25 @@ import Cookie from "js-cookie";
 import { User } from "./Types";
 
 const FindNewFriends = () => {
+  const [usersRequested, setUsersRequested] = useState<User[]>([]);
   const [searchResults, setSearchResults] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [requestSent, setRequestSent] = useState<{ [key: string]: boolean }>({});
+
+  // Get all requests send already to display the 'Withdraw' button instead of 'Send Request
+  useEffect(() => {
+    const getFriendRequestsSent = async () => {
+      const response = await fetch(getFriendRequestsSentEndpoint());
+      const responseJson = await response.json();
+      const initialRequestsSent = {};
+      responseJson.forEach((user: User) => {
+        initialRequestsSent[user.userId] = true;
+      });
+      setRequestSent(initialRequestsSent);
+    };
+    getFriendRequestsSent();
+  }, []);
 
   useEffect(() => {
     if (searchTerm === "") {
@@ -40,6 +56,7 @@ const FindNewFriends = () => {
 
       const response = await fetch(getSearchFriendsEndpoint(searchTerm));
       const responseJson = await response.json();
+
       setSearchResults(responseJson);
 
       setIsSearching(false);
@@ -94,9 +111,8 @@ const FindNewFriends = () => {
         onChange={handleSearchChange}
         margin="normal"
       />
-      {isSearching && searchTerm !== "" ? (
-        <CircularProgress />
-      ) : searchResults.length > 0 ? (
+      {isSearching && searchTerm !== "" && <CircularProgress />}
+      {!isSearching && searchTerm !== "" && searchResults.length > 0 && (
         <List className="modal-content">
           {searchResults.map((user) => (
             <ListItem
@@ -114,7 +130,8 @@ const FindNewFriends = () => {
             </ListItem>
           ))}
         </List>
-      ) : (
+      )}
+      {!isSearching && searchTerm !== "" && searchResults.length === 0 && (
         <Typography style={{ textAlign: "center", marginTop: "20px" }}>
           No users found
         </Typography>

@@ -30,6 +30,14 @@ def get_friends(request):
 
     return JsonResponse(friends, safe=False)
 
+def remove_friend(request, userId):
+    from_username = request.user
+    from_student = Student.objects.get(user__username=from_username)
+    to_student = Student.objects.get(user__id=userId)
+    # Remove the edge between friends
+    from_student.friends.remove(to_student)
+    to_student.friends.remove(from_student)
+    return HttpResponse('Friend removed', 200)
 
 def search_friends(request, query):
     # Query users and prefetch related Student objects in a single query

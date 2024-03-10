@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { List, ListItem, ListItemText, Button, Grid } from "@mui/material";
-import { getAcceptFriendRequestEndpoint, getFriendRequestsReceivedEndpoint, getRejectFriendRequestEndpoint } from "../../../constants/endpoints";
+import {
+  getAcceptFriendRequestEndpoint,
+  getFriendRequestsReceivedEndpoint,
+  getRejectFriendRequestEndpoint,
+} from "../../../constants/endpoints";
 import { User } from "./Types";
 
 /**
@@ -23,14 +27,17 @@ const RequestsReceived = () => {
   const acceptFriendRequest = async (friendRequestId: string) => {
     console.log("accept friend request");
     const response = await fetch(getAcceptFriendRequestEndpoint(friendRequestId));
-    const responseJson = await response.json();
-    console.log(responseJson);
+    setUsersRequesting(
+      usersRequesting.filter((user) => user.friendRequestId !== friendRequestId)
+    );
   };
 
   const ignoreFriendRequest = async (friendRequestId: string) => {
     console.log("remove friend request");
     const response = await fetch(getRejectFriendRequestEndpoint(friendRequestId));
-    const responseJson = await response.json();
+    setUsersRequesting(
+      usersRequesting.filter((user) => user.friendRequestId !== friendRequestId)
+    );
   };
 
   return (
