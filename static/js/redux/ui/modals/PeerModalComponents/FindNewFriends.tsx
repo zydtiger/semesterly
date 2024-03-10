@@ -19,24 +19,20 @@ import Cookie from "js-cookie";
 import { User } from "./Types";
 
 const FindNewFriends = () => {
-  const [usersRequested, setUsersRequested] = useState<User[]>([]);
   const [searchResults, setSearchResults] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [requestSent, setRequestSent] = useState<{ [key: string]: boolean }>({});
 
-  // Get all requests send already to display the 'Withdraw' button instead of 'Send Request
   useEffect(() => {
-    const getFriendRequestsSent = async () => {
+    const fetchFriendRequestsSent = async () => {
       const response = await fetch(getFriendRequestsSentEndpoint());
       const responseJson = await response.json();
-      const initialRequestsSent = {};
-      responseJson.forEach((user: User) => {
-        initialRequestsSent[user.userId] = true;
-      });
-      setRequestSent(initialRequestsSent);
+      setRequestSent(
+        responseJson.reduce((acc, user: User) => ({ ...acc, [user.userId]: true }), {})
+      );
     };
-    getFriendRequestsSent();
+    fetchFriendRequestsSent();
   }, []);
 
   useEffect(() => {
@@ -52,12 +48,8 @@ const FindNewFriends = () => {
       setSearchResults(responseJson);
       setIsSearching(false);
     };
-    const delayDebounceFn = setTimeout(fetchSearchResults, 500); // 500 ms delay
-    return () => {
-      if (delayDebounceFn) {
-        clearTimeout(delayDebounceFn);
-      }
-    };
+    const delayDebounceFn = setTimeout(fetchSearchResults, 500);
+    return () => clearTimeout(delayDebounceFn);
   }, [searchTerm]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,34 +57,19 @@ const FindNewFriends = () => {
   };
 
   const handleSendOrWithdrawRequest = async (userId: string) => {
-    if (!requestSent[userId]) {
-      // send request
-      await fetch(getSendFriendRequestEndpoint(userId), {
-        headers: {
-          "X-CSRFToken": Cookie.get("csrftoken"),
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-        credentials: "include",
-      });
-    } else {
-      // withdraw request
-      await fetch(getWithdrawFriendRequestEndpoint(userId), {
-        headers: {
-          "X-CSRFToken": Cookie.get("csrftoken"),
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-        credentials: "include",
-      });
-    }
-    // Simulating request sending, update the state to indicate the request is being sent
-    setRequestSent((prevStatus) => ({
-      ...prevStatus,
-      [userId]: !prevStatus[userId],
-    }));
+    const endpoint = requestSent[userId]
+      ? getWithdrawFriendRequestEndpoint(userId)
+      : getSendFriendRequestEndpoint(userId);
+    await fetch(endpoint, {
+      headers: {
+        "X-CSRFToken": Cookie.get("csrftoken"),
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      credentials: "include",
+    });
+    setRequestSent((prevStatus) => ({ ...prevStatus, [userId]: !prevStatus[userId] }));
   };
 
   return (
@@ -105,14 +82,11 @@ const FindNewFriends = () => {
         onChange={handleSearchChange}
         margin="normal"
       />
-      {isSearching && searchTerm !== "" && <CircularProgress />}
-      {!isSearching && searchTerm !== "" && searchResults.length > 0 && (
+      {isSearching && <CircularProgress />}
+      {!isSearching && searchTerm && searchResults.length > 0 && (
         <List className="modal-content">
           {searchResults.map((user) => (
-            <ListItem
-              key={user.userId}
-              style={{ display: "flex", justifyContent: "space-between" }}
-            >
+            <ListItem key={user.userId} style={{ justifyContent: "space-between" }}>
               <ListItemText primary={`${user.first_name} ${user.last_name}`} />
               <Button
                 variant="contained"
@@ -125,8 +99,8 @@ const FindNewFriends = () => {
           ))}
         </List>
       )}
-      {!isSearching && searchTerm !== "" && searchResults.length === 0 && (
-        <Typography style={{ textAlign: "center", marginTop: "20px" }}>
+      {!isSearching && searchTerm && !searchResults.length && (
+        <Typography align="center" sx={{ mt: 2 }}>
           No users found
         </Typography>
       )}

@@ -6,17 +6,8 @@ import {
 } from "../../../constants/endpoints";
 import { User } from "./Types";
 
-/**
- * This is the modal that pops up when a new news post has been published. It displays
- * the text of the news post, which is created and edited in the Django admin panel.
- */
 const CurrentFriends = () => {
   const [friends, setFriends] = useState<User[]>([]);
-
-  const removeFriend = async (userId: string) => {
-    const response = await fetch(getRemoveFriendEndpoint(userId));
-    setFriends(friends.filter((friend) => friend.userId !== userId));
-  };
 
   useEffect(() => {
     const getFriends = async () => {
@@ -27,19 +18,21 @@ const CurrentFriends = () => {
     getFriends();
   }, []);
 
+  const removeFriend = async (userId: string) => {
+    await fetch(getRemoveFriendEndpoint(userId));
+    setFriends((prevFriends) =>
+      prevFriends.filter((friend) => friend.userId !== userId)
+    );
+  };
+
   return (
     <List className="modal-content">
       {friends.length === 0 ? (
-        <ListItem style={{ display: "flex", justifyContent: "center" }}>
-          No friends
-        </ListItem>
+        <ListItem sx={{ justifyContent: "center" }}>No friends</ListItem>
       ) : (
         friends.map((friend) => (
-          <ListItem
-            key={friend.userId}
-            style={{ display: "flex", justifyContent: "space-between" }}
-          >
-            <ListItemText primary={friend.first_name + friend.last_name} />
+          <ListItem key={friend.userId} sx={{ justifyContent: "space-between" }}>
+            <ListItemText primary={`${friend.first_name} ${friend.last_name}`} />
             <Button
               variant="contained"
               color="secondary"
