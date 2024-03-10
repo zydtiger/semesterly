@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { List, ListItem, ListItemText, Button } from "@mui/material";
 import { getFetchFriendsEndpointEndpoint } from "../../../constants/endpoints";
+import { User } from "./Types";
 
-const users = [{ name: "Kiron Deb" }, { name: "Jacky Wang" }];
 /**
  * This is the modal that pops up when a new news post has been published. It displays
  * the text of the news post, which is created and edited in the Django admin panel.
  */
 const CurrentFriends = () => {
-  const [friends, setFriends] = useState([]);
+  const [friends, setFriends] = useState<User[]>([]);
   const removeFriend = () => {
     console.log("Remove friend functionality here");
   };
@@ -17,20 +17,21 @@ const CurrentFriends = () => {
     const getFriends = async () => {
       const response = await fetch(getFetchFriendsEndpointEndpoint());
       const responseJson = await response.json();
-      console.log(responseJson);
       setFriends(responseJson);
     };
     getFriends();
   }, []);
 
+  console.log(friends);
+
   return (
     <List className="modal-content">
-      {users.map((user, index) => (
+      {friends.map((friend) => (
         <ListItem
-          key={user.name}
+          key={friend.userId}
           style={{ display: "flex", justifyContent: "space-between" }}
         >
-          <ListItemText primary={user.name} />
+          <ListItemText primary={friend.first_name + friend.last_name} />
           <Button variant="contained" color="secondary" onClick={() => removeFriend()}>
             Remove Friend
           </Button>

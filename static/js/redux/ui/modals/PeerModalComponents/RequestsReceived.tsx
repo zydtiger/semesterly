@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { List, ListItem, ListItemText, Button, Grid } from "@mui/material";
-import { getFriendRequestsReceivedEndpoint } from "../../../constants/endpoints";
+import { getAcceptFriendRequestEndpoint, getFriendRequestsReceivedEndpoint, getRejectFriendRequestEndpoint } from "../../../constants/endpoints";
 import { User } from "./Types";
 
 /**
@@ -20,12 +20,17 @@ const RequestsReceived = () => {
     getFriendRequestsSent();
   }, []);
 
-  const acceptFriendRequest = () => {
+  const acceptFriendRequest = async (friendRequestId: string) => {
     console.log("accept friend request");
+    const response = await fetch(getAcceptFriendRequestEndpoint(friendRequestId));
+    const responseJson = await response.json();
+    console.log(responseJson);
   };
 
-  const ignoreFriendRequest = () => {
+  const ignoreFriendRequest = async (friendRequestId: string) => {
     console.log("remove friend request");
+    const response = await fetch(getRejectFriendRequestEndpoint(friendRequestId));
+    const responseJson = await response.json();
   };
 
   return (
@@ -48,7 +53,7 @@ const RequestsReceived = () => {
                 <Button
                   variant="contained"
                   color="secondary"
-                  onClick={() => acceptFriendRequest()}
+                  onClick={() => acceptFriendRequest(user.friendRequestId)}
                 >
                   Accept
                 </Button>
@@ -57,7 +62,7 @@ const RequestsReceived = () => {
                 <Button
                   variant="contained"
                   color="secondary"
-                  onClick={() => ignoreFriendRequest()}
+                  onClick={() => ignoreFriendRequest(user.friendRequestId)}
                 >
                   Ignore
                 </Button>

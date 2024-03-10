@@ -9,18 +9,26 @@ from django.core.serializers import serialize
 
 
 def get_friends(request):
-    logged_in_username = request.user
     logged_in_user = request.user
     try:
         logged_in_student = Student.objects.get(user=logged_in_user)
     except Student.DoesNotExist:
         return JsonResponse({'error': 'Student not found'}, status=404)
 
-    friends_queryset = logged_in_student.friends.all()
+    friends_queryset = logged_in_student.friends.all().select_related('user')
+    
+    friends = [
+        {
+            'userId': friend.user.id,
+            'email': friend.user.email,
+            'first_name': friend.user.first_name,
+            'last_name': friend.user.last_name,
+            'username': friend.user.username,
+            'img_url': getattr(friend, 'img_url', None)  # Safely get img_url or None
+        } for friend in friends_queryset
+    ]
 
-    # Serialize the queryset to JSON format
-    friends_json = serialize('json', friends_queryset, fields=('preferred_name', 'class_year', 'user', 'img_url', 'major'))
-    return JsonResponse(friends_json, safe=False)
+    return JsonResponse(friends, safe=False)
 
 
 def search_friends(request, query):
@@ -47,9 +55,6 @@ def send_friend_request(request, userId):
     from_username = request.user
     from_student = Student.objects.get(user__username=from_username)
     to_student = Student.objects.get(user__id=userId)
-    print('hahahahhahahah')
-    print(from_username, userId)
-    print(from_student, to_student)
     friend_request , created = FriendRequest.objects.get_or_create(from_friend=from_student, to_friend=to_student)
  
     if created:
@@ -87,7 +92,7 @@ def requests_received(request):
     
     friends = [
         {
-            'friendrequestId': friend_request.id,  # Include the FriendRequest ID
+            'friendRequestId': friend_request.id,  # Include the FriendRequest ID
             'userId': friend_request.from_friend.user.id,
             'email': friend_request.from_friend.user.email,
             'first_name': friend_request.from_friend.user.first_name,
@@ -116,17 +121,14 @@ def withdraw_friend_request(request, userId):
     
 def accept_friend_request(request, friendRequestId):
     friend_request = FriendRequest.objects.get(id=friendRequestId)
-    
+    # Create edge between friends
     friend_request.to_friend.friends.add(friend_request.from_friend)
     friend_request.from_friend.friends.add(friend_request.to_friend)
+    # Delete the friend request
     friend_request.delete()
     return HttpResponse('Friend request accepted', 200)
-    #else:
-    #    return HttpResponse('Friend request rejected', 400)
     
 def reject_friend_request(request, friendRequestId):
     friend_request = FriendRequest.objects.get(id=friendRequestId)
     friend_request.delete()
     return HttpResponse('Friend request rejected', 200)
-  #  else:
-   #     return HttpResponse('Friend request failed to reject', 400)
