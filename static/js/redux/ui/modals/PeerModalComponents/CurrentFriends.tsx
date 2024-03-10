@@ -27,8 +27,6 @@ const CurrentFriends = () => {
     getFriends();
   }, []);
 
-  console.log(friends);
-
   return (
     <List className="modal-content">
       {friends.length === 0 ? (

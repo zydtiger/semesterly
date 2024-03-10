@@ -40,30 +40,24 @@ const FindNewFriends = () => {
   }, []);
 
   useEffect(() => {
-    if (searchTerm === "") {
-      setSearchResults([]);
-      setIsSearching(false);
-      return;
-    }
-
-    const delayDebounceFn = setTimeout(async () => {
-      /**
-       * Example response:
-       * [ { email: "kirondeb02@gmail.com", first_name: "Kiron", last_name: "Deb",
-       *     img_url: "https://lh3.googleusercontent.com/a/ACg8ocJTtumXV_mOMdhpxSaKeV7R,
-       *     username: "kirondeb02", userId: 1  } ]
-       */
-
+    const fetchSearchResults = async () => {
+      if (searchTerm === "") {
+        setSearchResults([]);
+        setIsSearching(false);
+        return;
+      }
+      setIsSearching(true);
       const response = await fetch(getSearchFriendsEndpoint(searchTerm));
       const responseJson = await response.json();
-
       setSearchResults(responseJson);
-
       setIsSearching(false);
-    }, 500); // 500 ms delay
-
-    setIsSearching(true);
-    return () => clearTimeout(delayDebounceFn);
+    };
+    const delayDebounceFn = setTimeout(fetchSearchResults, 500); // 500 ms delay
+    return () => {
+      if (delayDebounceFn) {
+        clearTimeout(delayDebounceFn);
+      }
+    };
   }, [searchTerm]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {

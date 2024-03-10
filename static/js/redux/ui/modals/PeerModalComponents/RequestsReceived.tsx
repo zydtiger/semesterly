@@ -18,14 +18,12 @@ const RequestsReceived = () => {
     const getFriendRequestsSent = async () => {
       const response = await fetch(getFriendRequestsReceivedEndpoint());
       const responseJson = await response.json();
-      console.log(responseJson);
       setUsersRequesting(responseJson);
     };
     getFriendRequestsSent();
   }, []);
 
   const acceptFriendRequest = async (friendRequestId: string) => {
-    console.log("accept friend request");
     const response = await fetch(getAcceptFriendRequestEndpoint(friendRequestId));
     setUsersRequesting(
       usersRequesting.filter((user) => user.friendRequestId !== friendRequestId)
@@ -33,7 +31,6 @@ const RequestsReceived = () => {
   };
 
   const ignoreFriendRequest = async (friendRequestId: string) => {
-    console.log("remove friend request");
     const response = await fetch(getRejectFriendRequestEndpoint(friendRequestId));
     setUsersRequesting(
       usersRequesting.filter((user) => user.friendRequestId !== friendRequestId)

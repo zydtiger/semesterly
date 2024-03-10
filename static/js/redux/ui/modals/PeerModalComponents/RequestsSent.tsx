@@ -18,14 +18,12 @@ const RequestsSent = () => {
     const getFriendRequestsSent = async () => {
       const response = await fetch(getFriendRequestsSentEndpoint());
       const responseJson = await response.json();
-      console.log(responseJson);
       setUsersRequested(responseJson);
     };
     getFriendRequestsSent();
   }, []);
 
   const withdrawFriendRequest = async (userId: String) => {
-    console.log("withdraw friend request");
     await fetch(getWithdrawFriendRequestEndpoint(userId), {
       headers: {
         "X-CSRFToken": Cookie.get("csrftoken"),
