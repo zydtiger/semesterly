@@ -73,15 +73,22 @@ const FindNewFriends = () => {
   };
 
   return (
-    <Box>
-      <TextField
-        fullWidth
-        label="Search Users"
-        variant="outlined"
-        value={searchTerm}
-        onChange={handleSearchChange}
-        margin="normal"
-      />
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      className="modal-content"
+    >
+      <Box width="100%" maxWidth={600}>
+        <TextField
+          label="Search Users"
+          variant="outlined"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          margin="normal"
+          fullWidth
+        />
+      </Box>
       {isSearching && <CircularProgress />}
       {!isSearching && searchTerm && searchResults.length > 0 && (
         <List className="modal-content">

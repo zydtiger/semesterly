@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { List, ListItem, ListItemText, Button } from "@mui/material";
+import {
+  List,
+  ListItem,
+  ListItemText,
+  Button,
+  Grid,
+  CircularProgress,
+} from "@mui/material";
 import {
   getFriendRequestsSentEndpoint,
   getWithdrawFriendRequestEndpoint,
@@ -9,12 +16,19 @@ import Cookie from "js-cookie";
 
 const RequestsSent = () => {
   const [usersRequested, setUsersRequested] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchFriendRequestsSent = async () => {
-      const response = await fetch(getFriendRequestsSentEndpoint());
-      const responseJson = await response.json();
-      setUsersRequested(responseJson);
+      try {
+        const response = await fetch(getFriendRequestsSentEndpoint());
+        const responseJson = await response.json();
+        setUsersRequested(responseJson);
+      } catch (error) {
+        console.error("Error fetching friend requests sent:", error);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchFriendRequestsSent();
   }, []);
@@ -32,14 +46,26 @@ const RequestsSent = () => {
     setUsersRequested((users) => users.filter((user) => user.userId !== userId));
   };
 
-  return (
-    <List className="modal-content">
-      {usersRequested.length === 0 ? (
-        <ListItem style={{ justifyContent: "center" }}>No requests sent</ListItem>
-      ) : (
-        usersRequested.map((user) => (
-          <ListItem key={user.username} style={{ justifyContent: "space-between" }}>
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <ListItem style={{ justifyContent: "center" }}>
+          <CircularProgress />
+        </ListItem>
+      );
+    }
+
+    if (usersRequested.length === 0) {
+      return <ListItem style={{ justifyContent: "center" }}>No requests sent</ListItem>;
+    }
+
+    return usersRequested.map((user) => (
+      <ListItem key={user.username}>
+        <Grid container>
+          <Grid item xs={7}>
             <ListItemText primary={`${user.first_name} ${user.last_name}`} />
+          </Grid>
+          <Grid item>
             <Button
               variant="contained"
               color="secondary"
@@ -47,11 +73,13 @@ const RequestsSent = () => {
             >
               Withdraw
             </Button>
-          </ListItem>
-        ))
-      )}
-    </List>
-  );
+          </Grid>
+        </Grid>
+      </ListItem>
+    ));
+  };
+
+  return <List className="modal-content">{renderContent()}</List>;
 };
 
 export default RequestsSent;
