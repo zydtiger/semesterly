@@ -81,7 +81,11 @@ class FriendRequestTest(APITestCase):
         self.client.force_login(self.user1)
         response = self.client.get(reverse("friend requests sent"))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json()), 1)
+        requests_sent = response.json()
+        self.assertEqual(len(requests_sent), 1)
+        self.assertIn(self.user1.username, [request['sender']['username'] for request in requests_sent])
+        self.assertIn(self.user2.username, [request['receiver']['username'] for request in requests_sent])
+
 
     def test_requests_sent_empty(self):
         self.client.force_login(self.user1)
@@ -94,7 +98,10 @@ class FriendRequestTest(APITestCase):
         self.client.force_login(self.user1)
         response = self.client.get(reverse("friend requests received"))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json()), 1)
+        requests_received = response.json()
+        self.assertEqual(len(requests_received), 1)
+        self.assertIn(self.user2.username, [request['sender']['username'] for request in requests_received])
+        self.assertIn(self.user1.username, [request['receiver']['username'] for request in requests_received])
 
     def test_requests_received_empty(self):
         self.client.force_login(self.user1)
