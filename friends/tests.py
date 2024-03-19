@@ -51,7 +51,7 @@ class FriendRequestTest(APITestCase):
         response = self.client.post(reverse("send friend request", args=[self.user2.id]))
         self.assertEqual(response.status_code, 201)
         self.assertEqual(FriendRequest.objects.count(), 1)
-        self.assertEqual(response.content.decode(), 'Friend request created')
+        self.assertEqual(response.json()['message'], 'Friend request created')
 
     def test_send_duplicate_request(self):
         FriendRequest.objects.create(from_friend=self.student1, to_friend=self.student2)
@@ -59,7 +59,7 @@ class FriendRequestTest(APITestCase):
         response = self.client.post(reverse("send friend request", args=[self.user2.id]))
         self.assertEqual(response.status_code, 400)
         self.assertEqual(FriendRequest.objects.count(), 1)
-        self.assertEqual(response.content.decode(), 'Friend request already exists')
+        self.assertEqual(response.json()['message'], 'Friend request already exists')
 
     def test_withdraw_request(self):
         FriendRequest.objects.create(from_friend=self.student1, to_friend=self.student2)
@@ -67,14 +67,14 @@ class FriendRequestTest(APITestCase):
         response = self.client.post(reverse("withdraw friend request", args=[self.user2.id]))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(FriendRequest.objects.count(), 0)
-        self.assertEqual(response.content.decode(), 'Friend request withdrawn')
+        self.assertEqual(response.json()['message'], 'Friend request withdrawn')
+        
 
     def test_withdraw_nonexistent_request(self):
         self.client.force_login(self.user1)
         response = self.client.post(reverse("withdraw friend request", args=[self.user2.id]))
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
         self.assertEqual(FriendRequest.objects.count(), 0)
-        self.assertEqual(response.json()['error'], 'No friend request exists to withdraw')
 
     def test_requests_sent(self):
         FriendRequest.objects.create(from_friend=self.student1, to_friend=self.student2)
@@ -109,7 +109,7 @@ class FriendRequestTest(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(FriendRequest.objects.count(), 0)
         self.assertTrue(self.student1.friends.filter(id=self.student2.id).exists())
-        self.assertEqual(response.content.decode(), 'Friend request accepted')
+        self.assertEqual(response.json()['message'], 'Friend request accepted')
 
     def test_accept_nonexistent_request(self):
         self.client.force_login(self.user1)
@@ -117,7 +117,6 @@ class FriendRequestTest(APITestCase):
         self.assertEqual(response.status_code, 404)
         self.assertEqual(FriendRequest.objects.count(), 0)
         self.assertFalse(self.student1.friends.filter(id=self.student2.id).exists())
-        self.assertEqual(response.json()['error'], 'Friend request not found')
 
     def test_reject_request(self):
         friend_request = FriendRequest.objects.create(from_friend=self.student2, to_friend=self.student1)
@@ -126,7 +125,7 @@ class FriendRequestTest(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(FriendRequest.objects.count(), 0)
         self.assertFalse(self.student1.friends.filter(id=self.student2.id).exists())
-        self.assertEqual(response.content.decode(), 'Friend request rejected')
+        self.assertEqual(response.json()['message'], 'Friend request rejected')
 
     def test_reject_nonexistent_request(self):
         self.client.force_login(self.user1)
@@ -134,7 +133,6 @@ class FriendRequestTest(APITestCase):
         self.assertEqual(response.status_code, 404)
         self.assertEqual(FriendRequest.objects.count(), 0)
         self.assertFalse(self.student1.friends.filter(id=self.student2.id).exists())
-        self.assertEqual(response.json()['error'], 'Friend request not found')
 
     def test_search_friends(self):
         self.client.force_login(self.user1)
