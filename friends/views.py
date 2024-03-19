@@ -32,11 +32,13 @@ def get_friend_request_data(friend_request):
             'first_name': friend_request.from_friend.user.first_name,
             'last_name': friend_request.from_friend.user.last_name,
             'username': friend_request.from_friend.user.username,
+            'userId': friend_request.from_friend.user.id
         }, 
         'receiver': {
             'first_name': friend_request.to_friend.user.first_name,
             'last_name': friend_request.to_friend.user.last_name,
             'username': friend_request.to_friend.user.username,
+            'userId': friend_request.to_friend.user.id
         },
         'img_url': getattr(friend_request.to_friend, 'img_url', None)
     }
@@ -65,15 +67,19 @@ def remove_friend(request, userId):
 
 def search_friends(request, query):
     """
-    Searches for friends based on the given query and returns a list of matches.
+    Searches for friends based on the given query and returns a list of matches. Excludes existing friends.
     """
-    users_with_students = User.objects.filter(
+    logged_in_student = get_object_or_404(Student, user=request.user)
+    search_results = User.objects.filter(
         Q(first_name__icontains=query) |
         Q(last_name__icontains=query) |
         Q(username__icontains=query)
     ).select_related('student').only('email', 'first_name', 'last_name', 'username', 'student__img_url')
-    friends = [get_student_data(user.student) for user in users_with_students if hasattr(user, 'student')]
-    return JsonResponse(friends, safe=False)
+    search_results_excluding_friends = []
+    for user in search_results:
+        if hasattr(user, 'student') and user.student not in logged_in_student.friends.all():
+            search_results_excluding_friends.append(get_student_data(user.student))
+    return JsonResponse(search_results_excluding_friends, safe=False)
 
 
 def send_friend_request(request, userId):

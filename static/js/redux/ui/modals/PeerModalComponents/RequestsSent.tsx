@@ -9,13 +9,14 @@ import {
 } from "@mui/material";
 import {
   getFriendRequestsSentEndpoint,
+  getRejectFriendRequestEndpoint,
   getWithdrawFriendRequestEndpoint,
 } from "../../../constants/endpoints";
-import { User } from "./Types";
+import { FriendRequest } from "./Types";
 import Cookie from "js-cookie";
 
 const RequestsSent = () => {
-  const [usersRequested, setUsersRequested] = useState<User[]>([]);
+  const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,7 +24,7 @@ const RequestsSent = () => {
       try {
         const response = await fetch(getFriendRequestsSentEndpoint());
         const responseJson = await response.json();
-        setUsersRequested(responseJson);
+        setFriendRequests(responseJson);
       } catch (error) {
         console.error("Error fetching friend requests sent:", error);
       } finally {
@@ -33,17 +34,13 @@ const RequestsSent = () => {
     fetchFriendRequestsSent();
   }, []);
 
-  const withdrawFriendRequest = async (userId: String) => {
-    await fetch(getWithdrawFriendRequestEndpoint(userId), {
-      headers: {
-        "X-CSRFToken": Cookie.get("csrftoken"),
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-      credentials: "include",
-    });
-    setUsersRequested((users) => users.filter((user) => user.userId !== userId));
+  const withdrawFriendRequest = async (friendRequest: FriendRequest) => {
+    await fetch(getRejectFriendRequestEndpoint(friendRequest.friendRequestId));
+    setFriendRequests((currFriendRequests) =>
+      currFriendRequests.filter(
+        (fr) => fr.friendRequestId !== friendRequest.friendRequestId
+      )
+    );
   };
 
   const renderContent = () => {
@@ -55,21 +52,23 @@ const RequestsSent = () => {
       );
     }
 
-    if (usersRequested.length === 0) {
+    if (friendRequests.length === 0) {
       return <ListItem style={{ justifyContent: "center" }}>No requests sent</ListItem>;
     }
 
-    return usersRequested.map((user) => (
-      <ListItem key={user.username}>
+    return friendRequests.map((fr) => (
+      <ListItem key={fr.friendRequestId}>
         <Grid container>
           <Grid item xs={7}>
-            <ListItemText primary={`${user.first_name} ${user.last_name}`} />
+            <ListItemText
+              primary={`${fr.receiver.first_name} ${fr.receiver.last_name}`}
+            />
           </Grid>
           <Grid item>
             <Button
               variant="contained"
               color="secondary"
-              onClick={() => withdrawFriendRequest(user.userId)}
+              onClick={() => withdrawFriendRequest(fr)}
             >
               Withdraw
             </Button>

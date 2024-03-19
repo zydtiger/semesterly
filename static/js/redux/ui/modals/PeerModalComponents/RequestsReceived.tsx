@@ -12,10 +12,10 @@ import {
   getFriendRequestsReceivedEndpoint,
   getRejectFriendRequestEndpoint,
 } from "../../../constants/endpoints";
-import { User } from "./Types";
+import { FriendRequest, User } from "./Types";
 
 const RequestsReceived = () => {
-  const [usersRequesting, setUsersRequesting] = useState<User[]>([]);
+  const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,7 +23,7 @@ const RequestsReceived = () => {
       try {
         const response = await fetch(getFriendRequestsReceivedEndpoint());
         const responseJson = await response.json();
-        setUsersRequesting(responseJson);
+        setFriendRequests(responseJson);
       } catch (error) {
         console.error("Error fetching friend requests received:", error);
       } finally {
@@ -33,14 +33,14 @@ const RequestsReceived = () => {
     fetchFriendRequestsReceived();
   }, []);
 
-  const handleFriendRequest = async (friendRequestId: string, action: string) => {
+  const handleFriendRequest = async (friendRequestId: number, action: string) => {
     const endpoint =
       action === "accept"
         ? getAcceptFriendRequestEndpoint(friendRequestId)
         : getRejectFriendRequestEndpoint(friendRequestId);
     await fetch(endpoint);
-    setUsersRequesting((users) =>
-      users.filter((user) => user.friendRequestId !== friendRequestId)
+    setFriendRequests((currentFriendRequests) =>
+    currentFriendRequests.filter((fr) => fr.friendRequestId !== friendRequestId)
     );
   };
 
@@ -53,23 +53,23 @@ const RequestsReceived = () => {
       );
     }
 
-    if (usersRequesting.length === 0) {
+    if (friendRequests.length === 0) {
       return (
         <ListItem style={{ justifyContent: "center" }}>No requests received</ListItem>
       );
     }
 
-    return usersRequesting.map((user) => (
-      <ListItem key={user.username}>
+    return friendRequests.map((fr) => (
+      <ListItem key={fr.friendRequestId}>
         <Grid container spacing={2}>
           <Grid item xs={7}>
-            <ListItemText primary={`${user.first_name} ${user.last_name}`} />
+            <ListItemText primary={`${fr.sender.first_name} ${fr.sender.last_name}`} />
           </Grid>
           <Grid item>
             <Button
               variant="contained"
               color="secondary"
-              onClick={() => handleFriendRequest(user.friendRequestId, "accept")}
+              onClick={() => handleFriendRequest(fr.friendRequestId, "accept")}
             >
               Accept
             </Button>
@@ -78,7 +78,7 @@ const RequestsReceived = () => {
             <Button
               variant="contained"
               color="secondary"
-              onClick={() => handleFriendRequest(user.friendRequestId, "reject")}
+              onClick={() => handleFriendRequest(fr.friendRequestId, "reject")}
             >
               Ignore
             </Button>
