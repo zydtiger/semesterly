@@ -8,6 +8,7 @@ import {
   Box,
   CircularProgress,
   Typography,
+  Grid,
 } from "@mui/material";
 import {
   getFriendRequestsSentEndpoint,
@@ -74,34 +75,39 @@ const FindNewFriends = () => {
 
   return (
     <Box
+      width="100%"
+      maxWidth={600}
       display="flex"
       flexDirection="column"
       alignItems="center"
-      className="modal-content"
     >
-      <Box width="100%" maxWidth={600}>
-        <TextField
-          label="Search Users"
-          variant="outlined"
-          value={searchTerm}
-          onChange={handleSearchChange}
-          margin="normal"
-          fullWidth
-        />
-      </Box>
+      <TextField
+        label="Search Users"
+        variant="outlined"
+        value={searchTerm}
+        onChange={handleSearchChange}
+        margin="normal"
+        fullWidth
+      />
       {isSearching && <CircularProgress />}
       {!isSearching && searchTerm && searchResults.length > 0 && (
-        <List className="modal-content">
+        <List sx={{ width: "100%", maxWidth: 600 }}>
           {searchResults.map((user) => (
-            <ListItem key={user.userId} style={{ justifyContent: "space-between" }}>
-              <ListItemText primary={`${user.first_name} ${user.last_name}`} />
-              <Button
-                variant="contained"
-                color={requestSent[user.userId] ? "primary" : "secondary"}
-                onClick={() => handleSendOrWithdrawRequest(user.userId)}
-              >
-                {requestSent[user.userId] ? "Withdraw Request" : "Send Request"}
-              </Button>
+            <ListItem key={user.username}>
+              <Grid container spacing={7}>
+                <Grid item>
+                  <ListItemText primary={`${user.first_name} ${user.last_name}`} />
+                </Grid>
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    color={requestSent[user.userId] ? "primary" : "secondary"}
+                    onClick={() => handleSendOrWithdrawRequest(user.userId)}
+                  >
+                    {requestSent[user.userId] ? "Withdraw Request" : "Send Request"}
+                  </Button>
+                </Grid>
+              </Grid>
             </ListItem>
           ))}
         </List>

@@ -88,7 +88,7 @@ const RequestsReceived = () => {
     ));
   };
 
-  return <List className="modal-content">{renderContent()}</List>;
+  return <List>{renderContent()}</List>;
 };
 
 export default RequestsReceived;

@@ -79,7 +79,7 @@ const RequestsSent = () => {
     ));
   };
 
-  return <List className="modal-content">{renderContent()}</List>;
+  return <List>{renderContent()}</List>;
 };
 
 export default RequestsSent;

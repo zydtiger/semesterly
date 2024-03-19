@@ -317,14 +317,25 @@ const PeerModal = () => {
 
   const sideBar = (
     <div>
-      <Box sx={{ flexGrow: 1, bgcolor: "background.paper", display: "flex" }}>
+      <Box
+        sx={{
+          flexGrow: 1,
+          bgcolor: "background.paper",
+          display: "flex",
+          height: "100%",
+        }}
+      >
         <Tabs
           orientation="vertical"
           variant="fullWidth"
           value={tab || false}
           onChange={handleChange}
           aria-label="Vertical tabs example"
-          sx={{ borderRight: 1, borderColor: "divider" }}
+          sx={{
+            borderRight: 1,
+            borderColor: "divider",
+            minWidth: "100px",
+          }}
         >
           <Tab label="Classmates" {...a11yProps(0)} />
           <Tab label="Find New Friends" {...a11yProps(1)} />
@@ -333,24 +344,26 @@ const PeerModal = () => {
           <Tab label="Requests Sent" {...a11yProps(4)} />
           <Tab label="Friend Courses" {...a11yProps(5)} />
         </Tabs>
-        <TabPanel value={tab} index={0}>
-          {display}
-        </TabPanel>
-        <TabPanel value={tab} index={1}>
-          <FindNewFriends />
-        </TabPanel>
-        <TabPanel value={tab} index={2}>
-          <CurrentFriends />
-        </TabPanel>
-        <TabPanel value={tab} index={3}>
-          <RequestsReceived />
-        </TabPanel>
-        <TabPanel value={tab} index={4}>
-          <RequestsSent />
-        </TabPanel>
-        <TabPanel value={tab} index={5}>
-          <FriendsCourses />
-        </TabPanel>
+        <Box sx={{ flexGrow: 1 }}>
+          <TabPanel value={tab} index={0}>
+            {display}
+          </TabPanel>
+          <TabPanel value={tab} index={1}>
+            <FindNewFriends />
+          </TabPanel>
+          <TabPanel value={tab} index={2}>
+            <CurrentFriends />
+          </TabPanel>
+          <TabPanel value={tab} index={3}>
+            <RequestsReceived />
+          </TabPanel>
+          <TabPanel value={tab} index={4}>
+            <RequestsSent />
+          </TabPanel>
+          <TabPanel value={tab} index={5}>
+            <FriendsCourses />
+          </TabPanel>
+        </Box>
       </Box>
     </div>
   );
