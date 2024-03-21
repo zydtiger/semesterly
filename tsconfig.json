@@ -2,7 +2,7 @@
   "compilerOptions": {
     "rootDir": "./static",
     "outDir": "./static/bundles/",
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "sourceMap": true,
     "module": "es6",
     "target": "es5",

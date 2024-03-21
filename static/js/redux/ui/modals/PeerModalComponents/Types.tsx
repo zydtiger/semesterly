@@ -6,7 +6,7 @@ export interface User {
   username: string;
   userId: string;
   major: string;
-  class_year;
+  class_year: string;
 }
 
 export interface FriendRequest {
