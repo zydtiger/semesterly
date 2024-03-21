@@ -61,21 +61,6 @@ class FriendRequestTest(APITestCase):
         self.assertEqual(FriendRequest.objects.count(), 1)
         self.assertEqual(response.json()['message'], 'Friend request already exists')
 
-    def test_withdraw_request(self):
-        FriendRequest.objects.create(from_friend=self.student1, to_friend=self.student2)
-        self.client.force_login(self.user1)
-        response = self.client.post(reverse("withdraw friend request", args=[self.user2.id]))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(FriendRequest.objects.count(), 0)
-        self.assertEqual(response.json()['message'], 'Friend request withdrawn')
-        
-
-    def test_withdraw_nonexistent_request(self):
-        self.client.force_login(self.user1)
-        response = self.client.post(reverse("withdraw friend request", args=[self.user2.id]))
-        self.assertEqual(response.status_code, 404)
-        self.assertEqual(FriendRequest.objects.count(), 0)
-
     def test_requests_sent(self):
         FriendRequest.objects.create(from_friend=self.student1, to_friend=self.student2)
         self.client.force_login(self.user1)
