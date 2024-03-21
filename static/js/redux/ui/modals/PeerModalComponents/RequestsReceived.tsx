@@ -14,15 +14,10 @@ const RequestsReceived = () => {
 
   useEffect(() => {
     const fetchFriendRequestsReceived = async () => {
-      try {
-        const response = await fetch(getFriendRequestsReceivedEndpoint());
-        const responseJson = await response.json();
-        setFriendRequests(responseJson);
-      } catch (error) {
-        console.error("Error fetching friend requests received:", error);
-      } finally {
-        setLoading(false);
-      }
+      const response = await fetch(getFriendRequestsReceivedEndpoint());
+      const responseJson = await response.json();
+      setFriendRequests(responseJson);
+      setLoading(false);
     };
     fetchFriendRequestsReceived();
   }, []);

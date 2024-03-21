@@ -44,7 +44,7 @@ const FriendItem: React.FC<FriendItemProps> = ({
         />
       </Grid>
       {buttons.map((button, index) => (
-        <Grid item key={index}>
+        <Grid item key={button.text}>
           <Button variant="contained" color="secondary" onClick={button.onClick}>
             {button.text}
           </Button>

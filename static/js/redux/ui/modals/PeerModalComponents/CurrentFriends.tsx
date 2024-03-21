@@ -13,15 +13,10 @@ const CurrentFriends = () => {
 
   useEffect(() => {
     const getFriends = async () => {
-      try {
-        const response = await fetch(getFetchFriendsEndpointEndpoint());
-        const responseJson = await response.json();
-        setFriends(responseJson);
-      } catch (error) {
-        console.error("Error fetching friends:", error);
-      } finally {
-        setLoading(false);
-      }
+      const response = await fetch(getFetchFriendsEndpointEndpoint());
+      const responseJson = await response.json();
+      setFriends(responseJson);
+      setLoading(false);
     };
     getFriends();
   }, []);
