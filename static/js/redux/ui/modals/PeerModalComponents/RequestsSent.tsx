@@ -6,6 +6,8 @@ import {
   Button,
   Grid,
   CircularProgress,
+  Avatar,
+  Box,
 } from "@mui/material";
 import {
   getFriendRequestsSentEndpoint,
@@ -58,10 +60,26 @@ const RequestsSent = () => {
 
     return friendRequests.map((fr) => (
       <ListItem key={fr.friendRequestId}>
-        <Grid container>
-          <Grid item xs={7}>
+        <Grid container spacing={2} justifyContent="center">
+          <Grid item>
+            <Avatar
+              src={fr.img_url}
+              alt={`${fr.receiver.first_name} ${fr.receiver.last_name}`}
+              sx={{ width: 40, height: 40 }}
+            />
+          </Grid>
+          <Grid item width="40%">
             <ListItemText
               primary={`${fr.receiver.first_name} ${fr.receiver.last_name}`}
+              primaryTypographyProps={{
+                fontSize: "1.4rem",
+                fontWeight: "bold",
+              }}
+              sx={{ display: "flex", alignItems: "center" }}
+            />
+            <ListItemText
+              primary={`${fr.receiver.major} ${fr.receiver.class_year}`}
+              sx={{ display: "flex", alignItems: "center" }}
             />
           </Grid>
           <Grid item>
@@ -78,7 +96,9 @@ const RequestsSent = () => {
     ));
   };
 
-  return <List>{renderContent()}</List>;
+  return (
+    <List sx={{ display: "flex", justifyContent: "center" }}>{renderContent()}</List>
+  );
 };
 
 export default RequestsSent;

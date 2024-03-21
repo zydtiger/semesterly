@@ -9,6 +9,7 @@ import {
   CircularProgress,
   Typography,
   Grid,
+  Avatar,
 } from "@mui/material";
 import {
   getFriendRequestsSentEndpoint,
@@ -72,37 +73,53 @@ const FindNewFriends = () => {
     });
     setRequestSent((prevStatus) => ({ ...prevStatus, [userId]: !prevStatus[userId] }));
   };
+  console.log(searchResults);
 
   return (
-    <Box
-      width="100%"
-      maxWidth={600}
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-    >
-      <TextField
-        label="Search Users"
-        variant="outlined"
-        value={searchTerm}
-        onChange={handleSearchChange}
-        margin="normal"
-        fullWidth
-      />
+    <Box width="100%" display="flex" flexDirection="column" alignItems="center">
+      <Box width="100%" maxWidth={600} display="flex" justifyContent="center">
+        <TextField
+          label="Search Users"
+          variant="outlined"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          margin="normal"
+          fullWidth
+        />
+      </Box>
       {isSearching && <CircularProgress />}
       {!isSearching && searchTerm && searchResults.length > 0 && (
         <List sx={{ width: "100%", maxWidth: 600 }}>
           {searchResults.map((user) => (
             <ListItem key={user.username}>
-              <Grid container spacing={7}>
+              <Grid container spacing={2} alignItems="center">
                 <Grid item>
-                  <ListItemText primary={`${user.first_name} ${user.last_name}`} />
+                  <Avatar
+                    src={user.img_url}
+                    alt={`${user.first_name} ${user.last_name}`}
+                    sx={{ width: 40, height: 40 }}
+                  />
+                </Grid>
+                <Grid item xs>
+                  <ListItemText
+                    primary={`${user.first_name} ${user.last_name}`}
+                    primaryTypographyProps={{
+                      fontSize: "1.4rem",
+                      fontWeight: "bold",
+                    }}
+                    sx={{ display: "flex", alignItems: "center" }}
+                  />
+                  <ListItemText
+                    primary={`${user.major} ${user.class_year}`}
+                    sx={{ display: "flex", alignItems: "center" }}
+                  />
                 </Grid>
                 <Grid item>
                   <Button
                     variant="contained"
                     color={requestSent[user.userId] ? "primary" : "secondary"}
                     onClick={() => handleSendOrWithdrawRequest(user.userId)}
+                    sx={{ height: "100%" }}
                   >
                     {requestSent[user.userId] ? "Withdraw Request" : "Send Request"}
                   </Button>

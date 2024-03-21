@@ -6,6 +6,8 @@ import {
   Button,
   Grid,
   CircularProgress,
+  Avatar,
+  Box,
 } from "@mui/material";
 import {
   getAcceptFriendRequestEndpoint,
@@ -40,7 +42,7 @@ const RequestsReceived = () => {
         : getRejectFriendRequestEndpoint(friendRequestId);
     await fetch(endpoint);
     setFriendRequests((currentFriendRequests) =>
-    currentFriendRequests.filter((fr) => fr.friendRequestId !== friendRequestId)
+      currentFriendRequests.filter((fr) => fr.friendRequestId !== friendRequestId)
     );
   };
 
@@ -61,9 +63,23 @@ const RequestsReceived = () => {
 
     return friendRequests.map((fr) => (
       <ListItem key={fr.friendRequestId}>
-        <Grid container spacing={2}>
-          <Grid item xs={7}>
-            <ListItemText primary={`${fr.sender.first_name} ${fr.sender.last_name}`} />
+        <Grid container spacing={4} justifyContent="center">
+          <Grid item>
+            <Avatar
+              src={fr.img_url}
+              alt={`${fr.sender.first_name} ${fr.sender.last_name}`}
+              sx={{ width: 40, height: 40 }}
+            />
+          </Grid>
+          <Grid item width="40%">
+            <ListItemText
+              primary={`${fr.sender.first_name} ${fr.sender.last_name}`}
+              primaryTypographyProps={{
+                fontSize: "1.4rem",
+                fontWeight: "bold",
+              }}
+            />
+            <ListItemText primary={`${fr.sender.major} ${fr.sender.class_year}`} />
           </Grid>
           <Grid item>
             <Button
@@ -88,7 +104,9 @@ const RequestsReceived = () => {
     ));
   };
 
-  return <List>{renderContent()}</List>;
+  return (
+    <List sx={{ display: "flex", justifyContent: "center" }}>{renderContent()}</List>
+  );
 };
 
 export default RequestsReceived;

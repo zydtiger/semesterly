@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { List, ListItem, ListItemText, Button, CircularProgress } from "@mui/material";
+import {
+  List,
+  ListItem,
+  ListItemText,
+  Button,
+  CircularProgress,
+  Grid,
+  Avatar,
+} from "@mui/material";
 import {
   getFetchFriendsEndpointEndpoint,
   getRemoveFriendEndpoint,
@@ -46,20 +54,46 @@ const CurrentFriends = () => {
     }
 
     return friends.map((friend) => (
-      <ListItem key={friend.userId} sx={{ justifyContent: "space-between" }}>
-        <ListItemText primary={`${friend.first_name} ${friend.last_name}`} />
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={() => removeFriend(friend.userId)}
-        >
-          Remove Friend
-        </Button>
+      <ListItem key={friend.userId}>
+        <Grid container spacing={2} justifyContent="center">
+          <Grid item>
+            <Avatar
+              src={friend.img_url}
+              alt={`${friend.first_name} ${friend.last_name}`}
+              sx={{ width: 40, height: 40 }}
+            />
+          </Grid>
+          <Grid item width="40%">
+            <ListItemText
+              primary={`${friend.first_name} ${friend.last_name}`}
+              primaryTypographyProps={{
+                fontSize: "1.4rem",
+                fontWeight: "bold",
+              }}
+              sx={{ display: "flex", alignItems: "center" }}
+            />
+            <ListItemText
+              primary={`${friend.major} ${friend.class_year}`}
+              sx={{ display: "flex", alignItems: "center" }}
+            />
+          </Grid>
+          <Grid item>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => removeFriend(friend.userId)}
+            >
+              Remove Friend
+            </Button>
+          </Grid>
+        </Grid>
       </ListItem>
     ));
   };
 
-  return <List>{renderContent()}</List>;
+  return (
+    <List sx={{ display: "flex", justifyContent: "center" }}>{renderContent()}</List>
+  );
 };
 
 export default CurrentFriends;

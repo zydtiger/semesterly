@@ -16,6 +16,8 @@ def get_student_data(student):
         'first_name': student.user.first_name,
         'last_name': student.user.last_name,
         'username': student.user.username,
+        'major': student.major,
+        'class_year': student.class_year,
         'img_url': getattr(student, 'img_url', None)
     }
 
@@ -28,18 +30,8 @@ def get_friend_request_data(friend_request):
         'friendRequestId': friend_request.id,
         'userId': friend_request.to_friend.user.id,
         'email': friend_request.to_friend.user.email,
-        'sender': {
-            'first_name': friend_request.from_friend.user.first_name,
-            'last_name': friend_request.from_friend.user.last_name,
-            'username': friend_request.from_friend.user.username,
-            'userId': friend_request.from_friend.user.id
-        }, 
-        'receiver': {
-            'first_name': friend_request.to_friend.user.first_name,
-            'last_name': friend_request.to_friend.user.last_name,
-            'username': friend_request.to_friend.user.username,
-            'userId': friend_request.to_friend.user.id
-        },
+        'sender': get_student_data(friend_request.from_friend.user.student), 
+        'receiver': get_student_data(friend_request.to_friend.user.student),
         'img_url': getattr(friend_request.to_friend, 'img_url', None)
     }
 

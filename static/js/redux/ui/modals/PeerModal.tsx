@@ -26,7 +26,6 @@ import RequestsReceived from "./PeerModalComponents/RequestsReceived";
 import FindNewFriends from "./PeerModalComponents/FindNewFriends";
 import CurrentFriends from "./PeerModalComponents/CurrentFriends";
 import RequestsSent from "./PeerModalComponents/RequestsSent";
-import FriendsCourses from "./PeerModalComponents/FriendsCourses";
 
 const modalStyle = {
   height: "85%",
@@ -342,7 +341,6 @@ const PeerModal = () => {
           <Tab label="Current Friends" {...a11yProps(2)} />
           <Tab label="Requests Received" {...a11yProps(3)} />
           <Tab label="Requests Sent" {...a11yProps(4)} />
-          <Tab label="Friend Courses" {...a11yProps(5)} />
         </Tabs>
         <Box sx={{ flexGrow: 1 }}>
           <TabPanel value={tab} index={0}>
@@ -359,9 +357,6 @@ const PeerModal = () => {
           </TabPanel>
           <TabPanel value={tab} index={4}>
             <RequestsSent />
-          </TabPanel>
-          <TabPanel value={tab} index={5}>
-            <FriendsCourses />
           </TabPanel>
         </Box>
       </Box>
