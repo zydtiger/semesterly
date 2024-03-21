@@ -5,7 +5,6 @@ import {
   getRejectFriendRequestEndpoint,
 } from "../../../constants/endpoints";
 import { FriendRequest } from "./Types";
-import Cookie from "js-cookie";
 import FriendItem from "./FriendItem";
 
 const RequestsSent = () => {
