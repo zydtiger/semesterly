@@ -48,12 +48,12 @@ export const getRemoveFriendEndpoint = (userId) => `/friends/remove/${userId}`;
 export const getSearchFriendsEndpoint = (query) => `/friends/search/${query}`;
 export const getSendFriendRequestEndpoint = (userId) =>
   `/friends/send_request/${userId}`;
-export const getWithdrawFriendRequestEndpoint = (userId) =>
-  `/friends/withdraw_request/${userId}`;
 export const getFriendRequestsSentEndpoint = () => `/friends/requests_sent`;
 export const getFriendRequestsReceivedEndpoint = () => `friends/requests_received`;
-export const getAcceptFriendRequestEndpoint = (friendRequestId) => `/friends/accept_request/${friendRequestId}`;
-export const getRejectFriendRequestEndpoint = (friendRequestId) => `/friends/reject_request/${friendRequestId}`;
+export const getAcceptFriendRequestEndpoint = (friendRequestId) =>
+  `/friends/accept_request/${friendRequestId}`;
+export const getRejectFriendRequestEndpoint = (friendRequestId) =>
+  `/friends/reject_request/${friendRequestId}`;
 
 export const getSchoolInfoEndpoint = (school) => `/school/${school}/`;
 export const getReactToCourseEndpoint = () => "/user/reactions/";

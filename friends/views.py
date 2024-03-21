@@ -107,17 +107,6 @@ def get_requests_received(request):
     return JsonResponse(friends, safe=False)
 
 
-def withdraw_friend_request(request, userId):
-    """
-    Withdraws a friend request sent by the logged-in student to the student with the given user ID.
-    """
-    from_student = get_object_or_404(Student, user=request.user)
-    to_student = get_object_or_404(Student, user__id=userId)
-    friend_request = get_object_or_404(FriendRequest, from_friend=from_student, to_friend=to_student)
-    friend_request.delete()
-    return JsonResponse({'message': 'Friend request withdrawn'})
-
-
 def accept_friend_request(request, friendRequestId):
     """
     Accepts a friend request with the given ID for the logged-in student and returns a JSON response.

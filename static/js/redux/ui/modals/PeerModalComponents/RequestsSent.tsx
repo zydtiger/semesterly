@@ -12,10 +12,10 @@ import {
 import {
   getFriendRequestsSentEndpoint,
   getRejectFriendRequestEndpoint,
-  getWithdrawFriendRequestEndpoint,
 } from "../../../constants/endpoints";
 import { FriendRequest } from "./Types";
 import Cookie from "js-cookie";
+import FriendItem from "./FriendItem";
 
 const RequestsSent = () => {
   const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
@@ -36,12 +36,10 @@ const RequestsSent = () => {
     fetchFriendRequestsSent();
   }, []);
 
-  const withdrawFriendRequest = async (friendRequest: FriendRequest) => {
-    await fetch(getRejectFriendRequestEndpoint(friendRequest.friendRequestId));
+  const withdrawFriendRequest = async (friendRequestId: number) => {
+    await fetch(getRejectFriendRequestEndpoint(friendRequestId));
     setFriendRequests((currFriendRequests) =>
-      currFriendRequests.filter(
-        (fr) => fr.friendRequestId !== friendRequest.friendRequestId
-      )
+      currFriendRequests.filter((fr) => fr.friendRequestId !== friendRequestId)
     );
   };
 
@@ -59,40 +57,18 @@ const RequestsSent = () => {
     }
 
     return friendRequests.map((fr) => (
-      <ListItem key={fr.friendRequestId}>
-        <Grid container spacing={2} justifyContent="center">
-          <Grid item>
-            <Avatar
-              src={fr.img_url}
-              alt={`${fr.receiver.first_name} ${fr.receiver.last_name}`}
-              sx={{ width: 40, height: 40 }}
-            />
-          </Grid>
-          <Grid item width="40%">
-            <ListItemText
-              primary={`${fr.receiver.first_name} ${fr.receiver.last_name}`}
-              primaryTypographyProps={{
-                fontSize: "1.4rem",
-                fontWeight: "bold",
-              }}
-              sx={{ display: "flex", alignItems: "center" }}
-            />
-            <ListItemText
-              primary={`${fr.receiver.major} ${fr.receiver.class_year}`}
-              sx={{ display: "flex", alignItems: "center" }}
-            />
-          </Grid>
-          <Grid item>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={() => withdrawFriendRequest(fr)}
-            >
-              Withdraw
-            </Button>
-          </Grid>
-        </Grid>
-      </ListItem>
+      <FriendItem
+        key={fr.friendRequestId}
+        user={fr.receiver}
+        primaryText={`${fr.receiver.first_name} ${fr.receiver.last_name}`}
+        secondaryText={`${fr.receiver.major} ${fr.receiver.class_year}`}
+        buttons={[
+          {
+            text: "Withdraw",
+            onClick: () => withdrawFriendRequest(fr.friendRequestId),
+          },
+        ]}
+      />
     ));
   };
 

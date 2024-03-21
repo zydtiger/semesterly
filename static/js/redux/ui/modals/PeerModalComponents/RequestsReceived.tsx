@@ -15,6 +15,7 @@ import {
   getRejectFriendRequestEndpoint,
 } from "../../../constants/endpoints";
 import { FriendRequest, User } from "./Types";
+import FriendItem from "./FriendItem";
 
 const RequestsReceived = () => {
   const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
@@ -62,45 +63,22 @@ const RequestsReceived = () => {
     }
 
     return friendRequests.map((fr) => (
-      <ListItem key={fr.friendRequestId}>
-        <Grid container spacing={4} justifyContent="center">
-          <Grid item>
-            <Avatar
-              src={fr.img_url}
-              alt={`${fr.sender.first_name} ${fr.sender.last_name}`}
-              sx={{ width: 40, height: 40 }}
-            />
-          </Grid>
-          <Grid item width="40%">
-            <ListItemText
-              primary={`${fr.sender.first_name} ${fr.sender.last_name}`}
-              primaryTypographyProps={{
-                fontSize: "1.4rem",
-                fontWeight: "bold",
-              }}
-            />
-            <ListItemText primary={`${fr.sender.major} ${fr.sender.class_year}`} />
-          </Grid>
-          <Grid item>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={() => handleFriendRequest(fr.friendRequestId, "accept")}
-            >
-              Accept
-            </Button>
-          </Grid>
-          <Grid item>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={() => handleFriendRequest(fr.friendRequestId, "reject")}
-            >
-              Ignore
-            </Button>
-          </Grid>
-        </Grid>
-      </ListItem>
+      <FriendItem
+        key={fr.friendRequestId}
+        user={fr.sender}
+        primaryText={`${fr.sender.first_name} ${fr.sender.last_name}`}
+        secondaryText={`${fr.sender.major} ${fr.sender.class_year}`}
+        buttons={[
+          {
+            text: "Accept",
+            onClick: () => handleFriendRequest(fr.friendRequestId, "accept"),
+          },
+          {
+            text: "Ignore",
+            onClick: () => handleFriendRequest(fr.friendRequestId, "reject"),
+          },
+        ]}
+      />
     ));
   };
 

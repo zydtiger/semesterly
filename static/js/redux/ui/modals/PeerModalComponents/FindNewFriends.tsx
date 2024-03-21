@@ -13,9 +13,9 @@ import {
 } from "@mui/material";
 import {
   getFriendRequestsSentEndpoint,
+  getRejectFriendRequestEndpoint,
   getSearchFriendsEndpoint,
   getSendFriendRequestEndpoint,
-  getWithdrawFriendRequestEndpoint,
 } from "../../../constants/endpoints";
 import Cookie from "js-cookie";
 import { User } from "./Types";
@@ -60,7 +60,7 @@ const FindNewFriends = () => {
 
   const handleSendOrWithdrawRequest = async (userId: string) => {
     const endpoint = requestSent[userId]
-      ? getWithdrawFriendRequestEndpoint(userId)
+      ? getRejectFriendRequestEndpoint(userId)
       : getSendFriendRequestEndpoint(userId);
     await fetch(endpoint, {
       headers: {
