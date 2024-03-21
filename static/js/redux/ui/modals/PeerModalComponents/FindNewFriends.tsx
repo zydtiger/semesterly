@@ -73,7 +73,6 @@ const FindNewFriends = () => {
     });
     setRequestSent((prevStatus) => ({ ...prevStatus, [userId]: !prevStatus[userId] }));
   };
-
   return (
     <Box width="100%" display="flex" flexDirection="column" alignItems="center">
       <Box width="100%" maxWidth={600} display="flex" justifyContent="center">

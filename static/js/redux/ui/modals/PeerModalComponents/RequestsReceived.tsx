@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  List,
-  ListItem,
-  ListItemText,
-  Button,
-  Grid,
-  CircularProgress,
-  Avatar,
-  Box,
-} from "@mui/material";
+import { List, ListItem, CircularProgress } from "@mui/material";
 import {
   getAcceptFriendRequestEndpoint,
   getFriendRequestsReceivedEndpoint,
