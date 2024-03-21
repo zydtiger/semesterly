@@ -63,7 +63,16 @@ const CurrentFriends = () => {
   };
 
   return (
-    <List sx={{ display: "flex", justifyContent: "center" }}>{renderContent()}</List>
+    <List
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        maxHeight: "60%",
+        overflowY: "auto",
+      }}
+    >
+      {renderContent()}
+    </List>
   );
 };
 

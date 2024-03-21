@@ -89,7 +89,9 @@ const FindNewFriends = () => {
       </Box>
       {isSearching && <CircularProgress />}
       {!isSearching && searchTerm && searchResults.length > 0 && (
-        <List sx={{ width: "100%", maxWidth: 600 }}>
+        <List
+          sx={{ width: "100%", maxWidth: 600, maxHeight: "60%", overflowY: "auto" }}
+        >
           {searchResults.map((user) => (
             <ListItem key={user.username}>
               <Grid container spacing={2} alignItems="center">
