@@ -5,20 +5,41 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('student', '0046_delete_registrationtoken'),
+        ("student", "0046_delete_registrationtoken"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='FriendRequest',
+            name="FriendRequest",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('from_friend', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='from_friend', to='student.student')),
-                ('to_friend', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='to_friend', to='student.student')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "from_friend",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="from_friend",
+                        to="student.student",
+                    ),
+                ),
+                (
+                    "to_friend",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="to_friend",
+                        to="student.student",
+                    ),
+                ),
             ],
         ),
     ]
