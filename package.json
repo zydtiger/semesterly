@@ -164,7 +164,8 @@
     "sass-loader": "^6.0.7",
     "ts-jest": "^27.1.1",
     "ts-loader": "^3.5.0",
-    "typescript": "^4.5.3"
+    "typescript": "^4.5.3",
+    "webpack-cli": "^5.1.4"
   },
   "sasslintConfig": "sass-lint"
 }
