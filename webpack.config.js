@@ -68,7 +68,7 @@ const config = {
         exclude: /node_modules/,
         // use the babel loader
         loader: "babel-loader",
-        query: {
+        options: {
           // specify that we will be dealing with React code
           presets: ["react"],
         },
