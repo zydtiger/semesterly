@@ -58,7 +58,7 @@ const config = {
   devtool: "source-map",
 
   module: {
-    loaders: [
+    rules: [
       // a regexp that tells webpack use the following loaders on all
       // .js and .jsx files
       {
