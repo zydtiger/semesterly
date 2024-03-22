@@ -31,7 +31,7 @@ const FindNewFriends = () => {
       const response = await fetch(getFriendRequestsSentEndpoint());
       const responseJson = await response.json();
       setRequestSent(
-        responseJson.reduce((acc, user: User) => ({ ...acc, [user.userId]: true }), {})
+        responseJson.reduce((acc: string[], user: User) => ({ ...acc, [user.userId]: true }), {})
       );
     };
     fetchFriendRequestsSent();
