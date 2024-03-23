@@ -108,6 +108,7 @@
     "watchify": "^3.11.1",
     "webpack": "^4.19.1",
     "webpack-bundle-tracker": "^0.4.3",
+    "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^2.4.2"
   },
   "jest": {
