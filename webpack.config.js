@@ -120,14 +120,15 @@ const config = {
     ],
   },
 
+  node: {
+    fs: "empty",
+  },
+
   resolve: {
     // tells webpack where to look for modules
     modules: ["node_modules"],
     // extensions that should be used to resolve modules
     extensions: [".jsx", ".js", ".ts", ".tsx", ".scss", ".css"],
-    fallback: {
-      fs: false,
-    },
   },
 };
 
