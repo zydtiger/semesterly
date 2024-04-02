@@ -18,7 +18,7 @@ Right click on any container and press attach shell.
 
 4. Where do I store data such as passwords or secrets that I don’t want to commit?
 
-Add the keys only to semesterly/dev_credentials.py.
+Add the keys only to semesterly/dev_credentials.py, under SCRETS.
 
 
 5. What branch do I create a new branch off of when developing?
@@ -37,7 +37,8 @@ and try to keep commits to “one” change at a time and commit often.
 
 8. What linters do we run against our code?
 
-
+ESlint style guideline for JS and TS
+pycodestyle for Python
 
 9. What is a FeatureFlowView?
 
