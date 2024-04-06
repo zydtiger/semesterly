@@ -28,6 +28,6 @@ The commit format should be "Topic: Message".
 ESLint style guideline with Prettier for JS/TS and pycodestyle style guide with black for Python.
 
 9. What is a FeatureFlowView?
-
+`FeatureFlowView` is the request handler that inits the page with backend data. Only one instance of `FeatureFlowView` should exist at one time.
 
 When you are done answering the questions, create a PR for a discussion of your answers.
