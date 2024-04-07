@@ -55,19 +55,19 @@ const SideBar = () => {
   const colorData = useAppSelector(selectSlotColorData);
   const timetable = useAppSelector(getActiveTimetable);
   const mandatoryCourses = useAppSelector((state) =>
-    getCoursesFromSlots(state, timetable.slots),
+    getCoursesFromSlots(state, timetable.slots)
   );
   const semester = useAppSelector(getCurrentSemester);
   const savedTimetablesState = useAppSelector(
-    (state) => state.userInfo.data.timetables,
+    (state) => state.userInfo.data.timetables
   );
   const courseToColourIndex = useAppSelector((state) => state.ui.courseToColourIndex);
   const courseToClassmates = useAppSelector(
-    (state) => state.classmates.courseToClassmates,
+    (state) => state.classmates.courseToClassmates
   );
   const avgRating = useAppSelector((state) => timetable.avg_rating);
   const activeTimetable = useAppSelector(
-    (state) => state.savingTimetable.activeTimetable,
+    (state) => state.savingTimetable.activeTimetable
   );
 
   const getShareLink = (courseCode: string) => getCourseShareLink(courseCode, semester);
@@ -98,7 +98,7 @@ const SideBar = () => {
   };
 
   const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-    navigator.userAgent,
+    navigator.userAgent
   );
   const isPortrait = window.matchMedia("(orientation: portrait)").matches;
   const isMobile = mobile && window.innerWidth < 767 && isPortrait;
@@ -115,7 +115,7 @@ const SideBar = () => {
               onClick={(event) =>
                 stopPropagation(
                   () => dispatch(alertsActions.alertDeleteTimetable(t)),
-                  event,
+                  event
                 )
               }
               className="row-button"
@@ -150,7 +150,7 @@ const SideBar = () => {
                       activeTimetable,
                       comparedTimetable: t,
                       theme: curTheme,
-                    }),
+                    })
                   );
                   event.stopPropagation();
                 }}
@@ -175,7 +175,7 @@ const SideBar = () => {
             : getNextAvailableColour(courseToColourIndex);
         const professors = course.sections.map((section) => section.instructors);
         const sectionId = timetable.slots.find(
-          (slot) => slot.course === course.id,
+          (slot) => slot.course === course.id
         ).section;
 
         masterSlotList.push(course.id);
@@ -228,7 +228,7 @@ const SideBar = () => {
         dispatch(addOrRemoveCourse(masterSlotList[hoveredCourse]));
       }
     },
-    [hoveredCourse, masterSlotListLength],
+    [hoveredCourse, masterSlotListLength]
   );
 
   // Attaches/unattaches event listener to document
