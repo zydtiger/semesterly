@@ -169,33 +169,33 @@ const SideBar = () => {
 
   let masterSlots = mandatoryCourses
     ? mandatoryCourses.map((course) => {
-      const colourIndex =
-        course.id in courseToColourIndex
-          ? courseToColourIndex[course.id]
-          : getNextAvailableColour(courseToColourIndex);
-      const professors = course.sections.map((section) => section.instructors);
-      const sectionId = timetable.slots.find(
-        (slot) => slot.course === course.id
-      ).section;
+        const colourIndex =
+          course.id in courseToColourIndex
+            ? courseToColourIndex[course.id]
+            : getNextAvailableColour(courseToColourIndex);
+        const professors = course.sections.map((section) => section.instructors);
+        const sectionId = timetable.slots.find(
+          (slot) => slot.course === course.id
+        ).section;
 
-      masterSlotList.push(course.id);
+        masterSlotList.push(course.id);
 
-      return (
-        <MasterSlot
-          key={course.id}
-          sectionId={sectionId}
-          professors={professors}
-          colourIndex={colourIndex}
-          classmates={courseToClassmates[course.id]}
-          course={course}
-          fetchCourseInfo={() => dispatch(fetchCourseInfo(course.id))}
-          removeCourse={() => dispatch(addOrRemoveCourse(course.id))}
-          getShareLink={getShareLink}
-          colorData={colorData}
-          isHovered={masterSlotList[hoveredCourse] === course.id}
-        />
-      );
-    })
+        return (
+          <MasterSlot
+            key={course.id}
+            sectionId={sectionId}
+            professors={professors}
+            colourIndex={colourIndex}
+            classmates={courseToClassmates[course.id]}
+            course={course}
+            fetchCourseInfo={() => dispatch(fetchCourseInfo(course.id))}
+            removeCourse={() => dispatch(addOrRemoveCourse(course.id))}
+            getShareLink={getShareLink}
+            colorData={colorData}
+            isHovered={masterSlotList[hoveredCourse] === course.id}
+          />
+        );
+      })
     : null;
 
   // This detects changes to the size of masterSlotList (i.e. how many courses are on the current timetable) and updates the masterSlotList length accordingly
