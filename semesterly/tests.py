@@ -16,7 +16,6 @@ from timetable.models import Semester, Course
 
 
 class EndToEndTest(SeleniumTestCase):
-
     fixtures = ["jhu_fall_sample.json", "jhu_spring_sample.json"]
 
     def test_logged_out_flow(self):
