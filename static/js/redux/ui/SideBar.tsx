@@ -250,8 +250,11 @@ const SideBar = () => {
     masterSlots = (
       <div className="empty-state">
         <img
-          src={curTheme.name === "light" ? "/static/img/emptystates/masterslots.png" : "/static/img/emptystates/masterslots-dark.png"}
-          alt="No courses added." />
+          src={curTheme.name === "light" ?
+            "/static/img/emptystates/masterslots.png" :
+            "/static/img/emptystates/masterslots-dark.png"}
+          alt="No courses added."
+        />
         <h4>Looks like you don&#39;t have any courses yet!</h4>
         <h3>
           Your selections will appear here along with credits, professors and friends in
