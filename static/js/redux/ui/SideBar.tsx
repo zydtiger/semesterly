@@ -41,6 +41,8 @@ import AvgCourseRating from "./AvgCourseRating";
 import { selectSlotColorData, selectTheme } from "../state/slices/themeSlice";
 import { peerModalActions } from "../state/slices/peerModalSlice";
 import CreateNewTimetableButton from "./CreateNewTimetableButton";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
 
 /**
  * This component displays the timetable name, allows you to switch between timetables,
@@ -103,46 +105,63 @@ const SideBar = () => {
 
   const savedTimetables = savedTimetablesState
     ? savedTimetablesState.map((t: Timetable) => (
-      <div className="tt-name" key={t.id} onClick={() => dispatch(loadTimetable(t))}>
-        {t.name}
-        <button
-          onClick={(event) =>
-            stopPropagation(
-              () => dispatch(alertsActions.alertDeleteTimetable(t)),
-              event
-            )
-          }
-          className="row-button"
-        >
-          <i className="fa fa-trash-o" />
-        </button>
-        <button
-          onClick={(event) =>
-            stopPropagation(() => dispatch(duplicateTimetable(t)), event)
-          }
-          className="row-button"
-        >
-          <i className="fa fa-clone" />
-        </button>
-        {!isMobile && activeTimetable.name !== t.name && (
-          <button
-            onClick={(event) => {
-              dispatch(
-                startComparingTimetables({
-                  activeTimetable,
-                  comparedTimetable: t,
-                  theme: curTheme,
-                })
-              );
-              event.stopPropagation();
-            }}
-            className="row-button"
+        <div className="tt-name" key={t.id} onClick={() => dispatch(loadTimetable(t))}>
+          {t.name}
+          <Tooltip
+            title={<Typography fontSize={12}>Delete</Typography>}
+            disableInteractive
           >
-            <i className="fa-solid fa-arrows-left-right" />
-          </button>
-        )}
-      </div>
-    ))
+            <button
+              onClick={(event) =>
+                stopPropagation(
+                  () => dispatch(alertsActions.alertDeleteTimetable(t)),
+                  event
+                )
+              }
+              className="row-button"
+            >
+              <i className="fa fa-trash-o" />
+            </button>
+          </Tooltip>
+
+          <Tooltip
+            title={<Typography fontSize={12}>Duplicate</Typography>}
+            disableInteractive
+          >
+            <button
+              onClick={(event) =>
+                stopPropagation(() => dispatch(duplicateTimetable(t)), event)
+              }
+              className="row-button"
+            >
+              <i className="fa fa-clone" />
+            </button>
+          </Tooltip>
+
+          {!isMobile && activeTimetable.name !== t.name && (
+            <Tooltip
+              title={<Typography fontSize={12}>Compare</Typography>}
+              disableInteractive
+            >
+              <button
+                onClick={(event) => {
+                  dispatch(
+                    startComparingTimetables({
+                      activeTimetable,
+                      comparedTimetable: t,
+                      theme: curTheme,
+                    })
+                  );
+                  event.stopPropagation();
+                }}
+                className="row-button"
+              >
+                <i className="fa-solid fa-arrows-left-right" />
+              </button>
+            </Tooltip>
+          )}
+        </div>
+      ))
     : null;
 
   // Contains all keys for masterSlots (Iterated over for hoveredCourse, i.e. state for index of up/down keyboard shortcuts)
@@ -255,7 +274,9 @@ const SideBar = () => {
           >
             <div className="tip-border" />
             <div className="tip" />
+
             <h4>{`${semester.name} ${semester.year}`}</h4>
+
             {savedTimetables}
             <CreateNewTimetableButton setSidebarDropdown={setShowDropdown} />
           </div>
