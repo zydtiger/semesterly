@@ -105,63 +105,63 @@ const SideBar = () => {
 
   const savedTimetables = savedTimetablesState
     ? savedTimetablesState.map((t: Timetable) => (
-        <div className="tt-name" key={t.id} onClick={() => dispatch(loadTimetable(t))}>
-          {t.name}
+      <div className="tt-name" key={t.id} onClick={() => dispatch(loadTimetable(t))}>
+        {t.name}
+        <Tooltip
+          title={<Typography fontSize={12}>Delete</Typography>}
+          disableInteractive
+        >
+          <button
+            onClick={(event) =>
+              stopPropagation(
+                () => dispatch(alertsActions.alertDeleteTimetable(t)),
+                event
+              )
+            }
+            className="row-button"
+          >
+            <i className="fa fa-trash-o" />
+          </button>
+        </Tooltip>
+
+        <Tooltip
+          title={<Typography fontSize={12}>Duplicate</Typography>}
+          disableInteractive
+        >
+          <button
+            onClick={(event) =>
+              stopPropagation(() => dispatch(duplicateTimetable(t)), event)
+            }
+            className="row-button"
+          >
+            <i className="fa fa-clone" />
+          </button>
+        </Tooltip>
+
+        {!isMobile && activeTimetable.name !== t.name && (
           <Tooltip
-            title={<Typography fontSize={12}>Delete</Typography>}
+            title={<Typography fontSize={12}>Compare</Typography>}
             disableInteractive
           >
             <button
-              onClick={(event) =>
-                stopPropagation(
-                  () => dispatch(alertsActions.alertDeleteTimetable(t)),
-                  event
-                )
-              }
+              onClick={(event) => {
+                dispatch(
+                  startComparingTimetables({
+                    activeTimetable,
+                    comparedTimetable: t,
+                    theme: curTheme,
+                  })
+                );
+                event.stopPropagation();
+              }}
               className="row-button"
             >
-              <i className="fa fa-trash-o" />
+              <i className="fa-solid fa-arrows-left-right" />
             </button>
           </Tooltip>
-
-          <Tooltip
-            title={<Typography fontSize={12}>Duplicate</Typography>}
-            disableInteractive
-          >
-            <button
-              onClick={(event) =>
-                stopPropagation(() => dispatch(duplicateTimetable(t)), event)
-              }
-              className="row-button"
-            >
-              <i className="fa fa-clone" />
-            </button>
-          </Tooltip>
-
-          {!isMobile && activeTimetable.name !== t.name && (
-            <Tooltip
-              title={<Typography fontSize={12}>Compare</Typography>}
-              disableInteractive
-            >
-              <button
-                onClick={(event) => {
-                  dispatch(
-                    startComparingTimetables({
-                      activeTimetable,
-                      comparedTimetable: t,
-                      theme: curTheme,
-                    })
-                  );
-                  event.stopPropagation();
-                }}
-                className="row-button"
-              >
-                <i className="fa-solid fa-arrows-left-right" />
-              </button>
-            </Tooltip>
-          )}
-        </div>
-      ))
+        )}
+      </div>
+    ))
     : null;
 
   // Contains all keys for masterSlots (Iterated over for hoveredCourse, i.e. state for index of up/down keyboard shortcuts)
@@ -169,33 +169,33 @@ const SideBar = () => {
 
   let masterSlots = mandatoryCourses
     ? mandatoryCourses.map((course) => {
-        const colourIndex =
-          course.id in courseToColourIndex
-            ? courseToColourIndex[course.id]
-            : getNextAvailableColour(courseToColourIndex);
-        const professors = course.sections.map((section) => section.instructors);
-        const sectionId = timetable.slots.find(
-          (slot) => slot.course === course.id
-        ).section;
+      const colourIndex =
+        course.id in courseToColourIndex
+          ? courseToColourIndex[course.id]
+          : getNextAvailableColour(courseToColourIndex);
+      const professors = course.sections.map((section) => section.instructors);
+      const sectionId = timetable.slots.find(
+        (slot) => slot.course === course.id
+      ).section;
 
-        masterSlotList.push(course.id);
+      masterSlotList.push(course.id);
 
-        return (
-          <MasterSlot
-            key={course.id}
-            sectionId={sectionId}
-            professors={professors}
-            colourIndex={colourIndex}
-            classmates={courseToClassmates[course.id]}
-            course={course}
-            fetchCourseInfo={() => dispatch(fetchCourseInfo(course.id))}
-            removeCourse={() => dispatch(addOrRemoveCourse(course.id))}
-            getShareLink={getShareLink}
-            colorData={colorData}
-            isHovered={masterSlotList[hoveredCourse] === course.id}
-          />
-        );
-      })
+      return (
+        <MasterSlot
+          key={course.id}
+          sectionId={sectionId}
+          professors={professors}
+          colourIndex={colourIndex}
+          classmates={courseToClassmates[course.id]}
+          course={course}
+          fetchCourseInfo={() => dispatch(fetchCourseInfo(course.id))}
+          removeCourse={() => dispatch(addOrRemoveCourse(course.id))}
+          getShareLink={getShareLink}
+          colorData={colorData}
+          isHovered={masterSlotList[hoveredCourse] === course.id}
+        />
+      );
+    })
     : null;
 
   // This detects changes to the size of masterSlotList (i.e. how many courses are on the current timetable) and updates the masterSlotList length accordingly
@@ -250,9 +250,8 @@ const SideBar = () => {
     masterSlots = (
       <div className="empty-state">
         <img
-          src={curTheme.name === 'light' ? "/static/img/emptystates/masterslots.png" : "/static/img/emptystates/masterslots-dark.png"}
-          alt="No courses added."
-        />
+          src={curTheme.name === "light" ? "/static/img/emptystates/masterslots.png" : "/static/img/emptystates/masterslots-dark.png"}
+          alt="No courses added." />
         <h4>Looks like you don&#39;t have any courses yet!</h4>
         <h3>
           Your selections will appear here along with credits, professors and friends in
