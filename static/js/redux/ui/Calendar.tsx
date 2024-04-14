@@ -214,19 +214,15 @@ const Calendar = (props: CalendarProps) => {
 
   const screenshotButtonClicked = () => {
     const timetableElement = calendarRef.current;
-    html2canvas(timetableElement)
-      .then((canvas: HTMLCanvasElement) => {
-        const downloadLink = document.createElement("a");
-        const dataURL = canvas.toDataURL("image/png");
-        downloadLink.href = dataURL;
-        downloadLink.download = "timetable.png";
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-      })
-      .catch((error: any) => {
-        alert("Failed to take a screen shot!");
-      });
+    html2canvas(timetableElement).then((canvas: HTMLCanvasElement) => {
+      const downloadLink = document.createElement("a");
+      const dataURL = canvas.toDataURL("image/png");
+      downloadLink.href = dataURL;
+      downloadLink.download = "timetable.png";
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    });
   };
 
   const customEventModeButtonClicked = () => {
