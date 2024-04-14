@@ -225,7 +225,7 @@ const Calendar = (props: CalendarProps) => {
         document.body.removeChild(downloadLink);
       })
       .catch((error: any) => {
-        console.error("Error converting HTML to canvas:", error);
+        alert("Failed to take a screen shot!");
       });
   };
 
