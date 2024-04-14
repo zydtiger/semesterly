@@ -212,18 +212,20 @@ const Calendar = (props: CalendarProps) => {
   };
 
   const screenshotButtonClicked = () => {
-    const timetableElement = document.getElementById('Calendar') as HTMLDivElement;
-    html2canvas(timetableElement).then((canvas: HTMLCanvasElement) => {
-      const downloadLink = document.createElement('a');
-      const dataURL = canvas.toDataURL('image/png');
-      downloadLink.href = dataURL;
-      downloadLink.download = 'timetable.png';
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
-    }).catch((error: any) => {
-      console.error("Error converting HTML to canvas:", error);
-    });
+    const timetableElement = document.getElementById("Calendar") as HTMLDivElement;
+    html2canvas(timetableElement)
+      .then((canvas: HTMLCanvasElement) => {
+        const downloadLink = document.createElement("a");
+        const dataURL = canvas.toDataURL("image/png");
+        downloadLink.href = dataURL;
+        downloadLink.download = "timetable.png";
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+      })
+      .catch((error: any) => {
+        console.error("Error converting HTML to canvas:", error);
+      });
   };
 
   const customEventModeButtonClicked = () => {
@@ -268,7 +270,11 @@ const Calendar = (props: CalendarProps) => {
           data-tip
           onClick={screenshotButtonClicked}
         >
-        <img src="/static/img/screenshot.svg" alt="Sreenshot" style={{ width: '20px', height: 'auto' }} />
+          <img
+            src="/static/img/screenshot.svg"
+            alt="Sreenshot"
+            style={{ width: "20px", height: "auto" }}
+          />
         </button>
       </Tooltip>
     </div>
