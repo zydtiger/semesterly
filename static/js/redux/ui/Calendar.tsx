@@ -126,6 +126,7 @@ export const ShowWeekendsSwitch = (props: { isMobile: boolean }) => {
  */
 const Calendar = (props: CalendarProps) => {
   const dispatch = useDispatch();
+  const calendarRef = useRef(null);
 
   const showWeekend = useAppSelector((state) => state.preferences.showWeekend);
   const [shareLinkShown, setShareLinkShown] = useState(false);
@@ -212,7 +213,7 @@ const Calendar = (props: CalendarProps) => {
   };
 
   const screenshotButtonClicked = () => {
-    const timetableElement = document.getElementById("Calendar") as HTMLDivElement;
+    const timetableElement = calendarRef.current;
     html2canvas(timetableElement)
       .then((canvas: HTMLCanvasElement) => {
         const downloadLink = document.createElement("a");
@@ -397,7 +398,7 @@ const Calendar = (props: CalendarProps) => {
           style={{ height: getMaxTimetableHeightBasedOnWindowHeight(windowHeight) }}
           ref={timetableParentDivRef}
         >
-          <table id="Calendar">
+          <table ref={calendarRef}>
             <thead className="fc-head">
               <tr>
                 <td className="fc-head-container fc-widget-header">
