@@ -32,6 +32,7 @@ import { setShowWeekend } from "../actions/initActions";
 import { getMaxTimetableHeightBasedOnWindowHeight } from "../util";
 import useWindowSize from "../hooks/useWindowSize";
 import { getFirstTTStartHour } from "../state";
+import html2canvas from "html2canvas";
 
 interface RowProps {
   isLoggedIn: boolean;
@@ -210,6 +211,21 @@ const Calendar = (props: CalendarProps) => {
     form.submit();
   };
 
+  const screenshotButtonClicked = () => {
+    const timetableElement = document.getElementById('Calendar') as HTMLDivElement;
+    html2canvas(timetableElement).then((canvas: HTMLCanvasElement) => {
+      const downloadLink = document.createElement('a');
+      const dataURL = canvas.toDataURL('image/png');
+      downloadLink.href = dataURL;
+      downloadLink.download = 'timetable.png';
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    }).catch((error: any) => {
+      console.error("Error converting HTML to canvas:", error);
+    });
+  };
+
   const customEventModeButtonClicked = () => {
     if (props.isLoggedIn) {
       setCustomEventModeOn((previous) => !previous);
@@ -236,6 +252,23 @@ const Calendar = (props: CalendarProps) => {
           onClick={sisButtonClicked}
         >
           <img src="/static/img/addtosis.svg" alt="SIS" />
+        </button>
+      </Tooltip>
+    </div>
+  ) : null;
+
+  const screenShotButton = props.registrarSupported ? (
+    <div className="cal-btn-wrapper">
+      <Tooltip title={<Typography fontSize={12}>Screeshot</Typography>}>
+        <button
+          type="submit"
+          form="form1"
+          className="save-timetable add-button"
+          data-for="sis-btn-tooltip"
+          data-tip
+          onClick={screenshotButtonClicked}
+        >
+        <img src="/static/img/screenshot.svg" alt="Sreenshot" style={{ width: '20px', height: 'auto' }} />
         </button>
       </Tooltip>
     </div>
@@ -315,6 +348,7 @@ const Calendar = (props: CalendarProps) => {
   ) : (
     <>
       {addSISButton}
+      {screenShotButton}
       {toggleCustomEventModeButton}
       {shareButton}
       {shareLink}
@@ -357,7 +391,7 @@ const Calendar = (props: CalendarProps) => {
           style={{ height: getMaxTimetableHeightBasedOnWindowHeight(windowHeight) }}
           ref={timetableParentDivRef}
         >
-          <table>
+          <table id="Calendar">
             <thead className="fc-head">
               <tr>
                 <td className="fc-head-container fc-widget-header">
