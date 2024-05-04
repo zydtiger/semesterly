@@ -19,14 +19,13 @@ import { useActions, useAppDispatch, useAppSelector } from "../../hooks";
 import { signupModalActions } from "../../state/slices/signupModalSlice";
 import { userInfoActions } from "../../state/slices";
 import { peerModalActions } from "../../state/slices/peerModalSlice";
-import { selectSlotColorData } from "../../state/slices/themeSlice";
+import { selectSlotColorData, selectTheme } from "../../state/slices/themeSlice";
 import { parseInstructors } from "../CourseModalSection";
 import { Box, Tab, Tabs } from "@mui/material";
 import RequestsReceived from "./PeerModalComponents/RequestsReceived";
 import FindNewFriends from "./PeerModalComponents/FindNewFriends";
 import CurrentFriends from "./PeerModalComponents/CurrentFriends";
 import RequestsSent from "./PeerModalComponents/RequestsSent";
-import { selectTheme } from "../../state/slices/themeSlice";
 
 const modalStyle = {
   height: "85%",
