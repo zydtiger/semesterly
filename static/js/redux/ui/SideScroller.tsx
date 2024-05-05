@@ -15,7 +15,7 @@ GNU General Public License for more details.
 import React, { useState } from "react";
 
 interface SideScrollerProps {
-  content: JSX.Element[],
+  content: JSX.Element[];
   navItems: JSX.Element[];
 }
 
@@ -29,11 +29,7 @@ function SideScroller(props: SideScrollerProps) {
     for (let i = 0; i < props.navItems.length; i++) {
       const cls = activeSlide === i ? " nav-item-active" : "";
       navs.push(
-        <span
-          key={i}
-          className={`nav-item${cls}`}
-          onClick={() => setActiveSlide(i)}
-        >
+        <span key={i} className={`nav-item${cls}`} onClick={() => setActiveSlide(i)}>
           {props.navItems[i]}
         </span>
       );
