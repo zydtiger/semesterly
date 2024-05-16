@@ -19,7 +19,7 @@ import { useActions, useAppDispatch, useAppSelector } from "../../hooks";
 import { signupModalActions } from "../../state/slices/signupModalSlice";
 import { userInfoActions } from "../../state/slices";
 import { peerModalActions } from "../../state/slices/peerModalSlice";
-import { selectSlotColorData } from "../../state/slices/themeSlice";
+import { selectSlotColorData, selectTheme } from "../../state/slices/themeSlice";
 import { parseInstructors } from "../CourseModalSection";
 import { Box, Tab, Tabs } from "@mui/material";
 import RequestsReceived from "./PeerModalComponents/RequestsReceived";
@@ -48,6 +48,10 @@ const emptyState = (
     </div>
   </div>
 );
+
+/**
+ * Why is this called ghost card
+ */
 
 const ghostCard = (
   <div className="ghost peer-card">
@@ -112,6 +116,9 @@ const PeerModal = () => {
   const isVisible = useAppSelector((state) => state.peerModal.isVisible);
   const slotColorData = useAppSelector(selectSlotColorData);
   const [tab, setTab] = useState(0);
+
+  const theme = useAppSelector(selectTheme);
+  const isDarkMode = theme && theme.name && theme.name === "dark"; // whether dark mode is toggled
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue);
@@ -315,52 +322,70 @@ const PeerModal = () => {
   }
 
   const sideBar = (
-    <div>
-      <Box
+    <Box
+      sx={{
+        flexGrow: 1,
+        bgcolor: isDarkMode ? "#2d2e32" : "background.paper",
+        display: "flex",
+        height: "100%",
+      }}
+    >
+      <Tabs
+        orientation="vertical"
+        variant="fullWidth"
+        value={tab || false}
+        onChange={handleChange}
+        aria-label="Vertical tabs example"
         sx={{
-          flexGrow: 1,
-          bgcolor: "background.paper",
-          display: "flex",
-          height: "100%",
+          borderRight: 1,
+          borderColor: isDarkMode ? "#A9A9A9" : "divider",
+          minWidth: "100px",
         }}
       >
-        <Tabs
-          orientation="vertical"
-          variant="fullWidth"
-          value={tab || false}
-          onChange={handleChange}
-          aria-label="Vertical tabs example"
-          sx={{
-            borderRight: 1,
-            borderColor: "divider",
-            minWidth: "100px",
-          }}
-        >
-          <Tab label="Classmates" {...a11yProps(0)} />
-          <Tab label="Find New Friends" {...a11yProps(1)} />
-          <Tab label="Current Friends" {...a11yProps(2)} />
-          <Tab label="Requests Received" {...a11yProps(3)} />
-          <Tab label="Requests Sent" {...a11yProps(4)} />
-        </Tabs>
-        <Box sx={{ flexGrow: 1 }}>
-          <TabPanel value={tab} index={0}>
-            {display}
-          </TabPanel>
-          <TabPanel value={tab} index={1}>
-            <FindNewFriends />
-          </TabPanel>
-          <TabPanel value={tab} index={2}>
-            <CurrentFriends />
-          </TabPanel>
-          <TabPanel value={tab} index={3}>
-            <RequestsReceived />
-          </TabPanel>
-          <TabPanel value={tab} index={4}>
-            <RequestsSent />
-          </TabPanel>
-        </Box>
+        <Tab
+          label="Classmates"
+          {...a11yProps(0)}
+          sx={isDarkMode ? { color: "#ceddeb" } : undefined} // dark mode font color
+        />
+        <Tab
+          label="Find New Friends"
+          {...a11yProps(1)}
+          sx={isDarkMode ? { color: "#ceddeb" } : undefined}
+        />
+        <Tab
+          label="Current Friends"
+          {...a11yProps(2)}
+          sx={isDarkMode ? { color: "#ceddeb" } : undefined}
+        />
+        <Tab
+          label="Requests Received"
+          {...a11yProps(3)}
+          sx={isDarkMode ? { color: "#ceddeb" } : undefined}
+        />
+        <Tab
+          label="Requests Sent"
+          {...a11yProps(4)}
+          sx={isDarkMode ? { color: "#ceddeb" } : undefined}
+        />
+      </Tabs>
+      <Box sx={{ flexGrow: 1, overflowY: "auto" }}>
+        <TabPanel value={tab} index={0}>
+          {display}
+        </TabPanel>
+        <TabPanel value={tab} index={1}>
+          <FindNewFriends />
+        </TabPanel>
+        <TabPanel value={tab} index={2}>
+          <CurrentFriends />
+        </TabPanel>
+        <TabPanel value={tab} index={3}>
+          <RequestsReceived />
+        </TabPanel>
+        <TabPanel value={tab} index={4}>
+          <RequestsSent />
+        </TabPanel>
       </Box>
-    </div>
+    </Box>
   );
 
   return (

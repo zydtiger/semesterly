@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { selectTheme } from "../../../state/slices/themeSlice";
 import {
   List,
   ListItem,
@@ -19,12 +20,15 @@ import {
 } from "../../../constants/endpoints";
 import Cookie from "js-cookie";
 import { User } from "./Types";
+import { useAppSelector } from "../../../hooks";
 
 const FindNewFriends = () => {
   const [searchResults, setSearchResults] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [requestSent, setRequestSent] = useState<{ [key: string]: boolean }>({});
+  const theme = useAppSelector(selectTheme);
+  const isDarkMode = theme && theme.name && theme.name === "dark";
 
   useEffect(() => {
     const fetchFriendRequestsSent = async () => {
@@ -42,11 +46,6 @@ const FindNewFriends = () => {
 
   useEffect(() => {
     const fetchSearchResults = async () => {
-      if (searchTerm === "") {
-        setSearchResults([]);
-        setIsSearching(false);
-        return;
-      }
       setIsSearching(true);
       const response = await fetch(getSearchFriendsEndpoint(searchTerm));
       const responseJson = await response.json();
@@ -86,9 +85,26 @@ const FindNewFriends = () => {
           onChange={handleSearchChange}
           margin="normal"
           fullWidth
+          // darkmode pallete for fonts and border
+          {...(isDarkMode && {
+            InputLabelProps: { style: { color: "white" } },
+            sx: {
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "darkgrey",
+                },
+                "&:hover fieldset": {
+                  borderColor: "darkgrey",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "darkgrey",
+                },
+              },
+            },
+          })}
         />
       </Box>
-      {isSearching && <CircularProgress />}
+      {isSearching && searchTerm.length > 0 && <CircularProgress />}
       {!isSearching && searchTerm && searchResults.length > 0 && (
         <List
           sx={{ width: "100%", maxWidth: 600, maxHeight: "60%", overflowY: "auto" }}
