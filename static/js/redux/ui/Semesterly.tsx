@@ -155,7 +155,7 @@ const Semesterly = () => {
       "November",
       "December",
     ];
-    
+
     const curDay: number = curDate.getDate();
     const dateEnding: string = dayToDayEnding(curDay);
     const monthIndex: number = curDate.getMonth();
@@ -182,7 +182,7 @@ const Semesterly = () => {
       default:
         return "th";
     }
-  }
+  };
 
   const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
     navigator.userAgent
@@ -220,8 +220,7 @@ const Semesterly = () => {
           {cal}
           <footer className="timetable-footer navbar no-print">
             <p className="data-last-updated no-print">
-              Data last updated:{" "}
-              {toLocalDate()}
+              Data last updated: {toLocalDate()}
             </p>
             <ul className="nav nav-pills no-print">
               <li className="footer-button" role="presentation">
