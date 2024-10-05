@@ -142,10 +142,10 @@ const SearchResult = (props: SearchResultProps) => {
 
 type AreaBubbleProps = { areas: string[] };
 export const AreaBubble = ({ areas }: AreaBubbleProps) => {
-  const isValidArea = (rawAreaSingle: string) : boolean => {
-    const validAreas = ['H', 'S', 'N', 'E', 'Q', 'writing'];
+  const isValidArea = (rawAreaSingle: string): boolean => {
+    const validAreas = ["H", "S", "N", "E", "Q", "writing"];
     return validAreas.includes(rawAreaSingle);
-  }
+  };
 
   const validAreas = areas.filter((areaCandidate) => isValidArea(areaCandidate));
 
@@ -158,8 +158,7 @@ export const AreaBubble = ({ areas }: AreaBubbleProps) => {
       ))}
     </div>
   ) : null;
-}
-  
+};
 
 type WritingIntensiveProps = { isWritingIntensive: string };
 export const WritingIntensive = ({ isWritingIntensive }: WritingIntensiveProps) =>
