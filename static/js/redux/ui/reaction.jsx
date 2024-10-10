@@ -14,7 +14,7 @@ GNU General Public License for more details.
 
 import PropTypes from "prop-types";
 import React from "react";
-import twemoji from "@twemoji/api"
+import twemoji from "@twemoji/api";
 import renderHTML from "react-render-html";
 import classNames from "classnames";
 import REACTION_MAP from "../constants/reactions";
@@ -70,7 +70,7 @@ class Reaction extends React.Component {
         <div className="emoji" style={emojiStyle}>
           {renderHTML(emojiHTMLString)}
         </div>
-  
+
         <div
           className={classNames({
             "action-container": true,
