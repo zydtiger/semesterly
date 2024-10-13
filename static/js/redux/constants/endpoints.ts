@@ -12,7 +12,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
-import { User } from "../ui/modals/PeerModalComponents/Types";
+import { FriendRequest, User } from "../ui/modals/PeerModalComponents/Types";
 import { Course, Semester, Slot, Timetable } from "./commonTypes";
 
 /* server endpoints */
@@ -67,21 +67,21 @@ export const getSendFriendRequestEndpoint = (userId: User["userId"]) =>
   `/friends/send_request/${userId}`;
 export const getFriendRequestsSentEndpoint = () => `/friends/requests_sent`;
 export const getFriendRequestsReceivedEndpoint = () => `friends/requests_received`;
-export const getAcceptFriendRequestEndpoint = (friendRequestId: number) =>
+export const getAcceptFriendRequestEndpoint = (friendRequestId: FriendRequest['friendRequestId']) =>
   `/friends/accept_request/${friendRequestId}`;
-export const getRejectFriendRequestEndpoint = (friendRequestId: number) =>
+export const getRejectFriendRequestEndpoint = (friendRequestId: FriendRequest['friendRequestId'] | string) =>
   `/friends/reject_request/${friendRequestId}`;
 
 export const getSchoolInfoEndpoint = (school: string) => `/school/${school}/`;
 export const getReactToCourseEndpoint = () => "/user/reactions/";
 export const getRequestShareTimetableLinkEndpoint = () => "/timetables/links/";
 export const acceptTOSEndpoint = () => "/tos/accept/";
-export function getCourseShareLinkFromModal(code: Course["code"], semester: Semester) {
+export function getCourseShareLinkFromModal(code: Course['code'] | number, semester: Semester) {
   return `/course/${encodeURIComponent(code)}/${semester.name}/${semester.year}`;
 }
 // TODO: ${window.location.href.split('/')[2]} insert above ^
 
-export function getCourseShareLink(code: Course["code"], semester: Semester) {
+export function getCourseShareLink(code: Course['code'] | number, semester: Semester) {
   return `/course/${encodeURIComponent(code)}/${semester.name}/${semester.year}`;
 }
 
