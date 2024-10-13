@@ -25,7 +25,7 @@ export const VALID_SCHOOLS = [
   "salisbury",
 ];
 
-export const getSchoolSpecificInfo = (school: typeof VALID_SCHOOLS[number]) => {
+export const getSchoolSpecificInfo = (school: string) => {
   switch (school) {
     case "uoft":
       return {
