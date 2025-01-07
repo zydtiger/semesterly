@@ -92,6 +92,8 @@ def create_student(strategy, details, response, user, *args, **kwargs):
         update_student_facebook(student, social_user)
     elif backend_name == "azuread-tenant-oauth2":
         update_student_jhed(student, response)
+    elif backend_name == "oidc":
+        update_student_jhed_oidc(student, response)
     elif backend_name == "google-oauth2":
         update_student_google(student, social_user, hasFacebook)
     student.save()
@@ -134,6 +136,15 @@ def update_student_jhed(student, response):
     student.jhed = response["unique_name"]
     student.preferred_name = response["name"]
 
+def update_student_jhed_oidc(student, response):
+    student_openid = response["openid"]
+    at_index = student_openid.find('@')
+    
+    if at_index == -1:
+        return
+
+    student.jhed = student_openid[:at_index]
+    student.preferred_name = response["given_name"]
 
 def update_student_google(student, social_user, hasFacebook):
     try:
