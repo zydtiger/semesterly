@@ -50,7 +50,6 @@ import CreateNewTimetableButton from "./CreateNewTimetableButton";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { findTopSchedules } from "./optimize_schedule";
-import { section } from "../__fixtures__/state";
 
 /**
  * This component displays the timetable name, allows you to switch between timetables,
@@ -81,6 +80,8 @@ const SideBar = () => {
     (state) => state.savingTimetable.activeTimetable
   );
 
+  const MAXIMUM_COURSE_PLAN = 20;
+
   const getShareLink = (courseCode: string) => getCourseShareLink(courseCode, semester);
   const timetableCourses = useAppSelector((state) => getActiveTimetableCourses(state));
   const events = useAppSelector((state) => state.customEvents.events);
@@ -105,6 +106,14 @@ const SideBar = () => {
   const [coursePlanMasterSlots, setCoursePlanMasterSlots] = useState([]);
   // masterSlotCourses stores all the courses in the course list, excluding the ones the user puts in the optimization section
   const [masterSlotCourses, setMasterSlotCourses] = useState([]);
+  const [optimizedSchedules, setOptimizeSchedules] = useState([]);
+
+  // TODO:
+  // add alert
+  // update https://semesterly-v2.readthedocs.io/en/latest/frontend.html
+  // dark mode compat
+  // add course button back
+  // add multiple course schedules
 
   useEffect(() => {
     const updatedMasterSlotList: number[] = [];
@@ -137,7 +146,7 @@ const SideBar = () => {
       setCoursePlanMasterSlots,
       true,
       false,
-      false,
+      false, // set delete button for course plan
       "coursePlan"
     );
   }, [mandatoryCourses, coursePlan]);
@@ -434,7 +443,12 @@ const SideBar = () => {
   };
 
   const handleCreateClick = () => {
-    if (coursePlan.length === 0) return;
+    if (coursePlan.length === 0 && coursePlan.length < MAXIMUM_COURSE_PLAN) {
+      // alert?
+      // no courses to optimize
+      // over course limit MAX_NUMBER
+      return;
+    }
     const updatedCoursePlan = addCourseIDToCourseList(coursePlan);
 
     const lockedSections = currentSections.filter((section) =>
@@ -442,7 +456,7 @@ const SideBar = () => {
     );
     const schedules = findTopSchedules(updatedCoursePlan, lockedSections);
 
-    console.log(schedules);
+    // console.log(lockedSections, schedules);
     if (schedules.length === 0) {
       console.error("no feasible schedule found");
       return;
@@ -456,6 +470,10 @@ const SideBar = () => {
     setCoursePlan(mandatoryCourses);
     setMasterSlotCourses([]);
   };
+
+  const nextSchedule = () => {};
+
+  const prevSchedule = () => {};
 
   return (
     <div
@@ -567,7 +585,9 @@ const SideBar = () => {
               justifyContent: "center",
             }}
           >
-            <button onClick={handleCreateClick}>Create</button>
+            <button style={{ border: "none" }} onClick={handleCreateClick}>
+              Create
+            </button>
             <button onClick={handleAddAllClick}>Add All</button>
           </div>
         </div>
