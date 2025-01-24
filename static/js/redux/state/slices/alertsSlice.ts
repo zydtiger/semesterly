@@ -14,6 +14,8 @@ interface AlertsSliceState {
   totalFriendsCount: number;
   desiredSemester: number;
   timetableToDelete: null | Timetable;
+  alertCoursePlan: boolean;
+  alertCoursePlanType: number;
 }
 
 const initialState: AlertsSliceState = {
@@ -27,6 +29,8 @@ const initialState: AlertsSliceState = {
   totalFriendsCount: 0,
   desiredSemester: 0,
   timetableToDelete: null,
+  alertCoursePlan: false,
+  alertCoursePlanType: 0,
 };
 
 const alertsSlice = createSlice({
@@ -78,6 +82,20 @@ const alertsSlice = createSlice({
       state.mostFriendsCount = action.payload.mostFriendsCount;
       state.mostFriendsClassId = action.payload.mostFriendsClassId;
       state.totalFriendsCount = action.payload.totalFriendsCount;
+    },
+
+    // New reducer for empty schedule alert
+    alertCoursePlan: (
+      state,
+      action: PayloadAction<{
+        alertType: number;
+      }>
+    ) => {
+      state.alertCoursePlan = true;
+      state.alertCoursePlanType = action.payload.alertType;
+    },
+    dismissAlertCoursePlan: (state) => {
+      state.alertCoursePlan = false;
     },
   },
   extraReducers: (builder) => {

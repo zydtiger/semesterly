@@ -80,7 +80,7 @@ const SideBar = () => {
     (state) => state.savingTimetable.activeTimetable
   );
 
-  const MAXIMUM_COURSE_PLAN = 20;
+  const MAXIMUM_COURSE_PLAN = 15;
 
   const getShareLink = (courseCode: string) => getCourseShareLink(courseCode, semester);
   const timetableCourses = useAppSelector((state) => getActiveTimetableCourses(state));
@@ -106,14 +106,13 @@ const SideBar = () => {
   const [coursePlanMasterSlots, setCoursePlanMasterSlots] = useState([]);
   // masterSlotCourses stores all the courses in the course list, excluding the ones the user puts in the optimization section
   const [masterSlotCourses, setMasterSlotCourses] = useState([]);
-  const [optimizedSchedules, setOptimizeSchedules] = useState([]);
+
+  const theme = useAppSelector(selectTheme);
+  const isDarkMode = theme && theme.name && theme.name === "dark";
 
   // TODO:
-  // add alert
   // update https://semesterly-v2.readthedocs.io/en/latest/frontend.html
-  // dark mode compat
-  // add course button back
-  // add multiple course schedules
+  // fix half semesters planning
 
   useEffect(() => {
     const updatedMasterSlotList: number[] = [];
@@ -231,7 +230,6 @@ const SideBar = () => {
 
   const hideDropdown = () => {
     setShowDropdown(false);
-
     // * Set hoveredCourse to -1 if user clicks out
     setHoveredCourse(-1);
   };
@@ -443,10 +441,9 @@ const SideBar = () => {
   };
 
   const handleCreateClick = () => {
-    if (coursePlan.length === 0 && coursePlan.length < MAXIMUM_COURSE_PLAN) {
-      // alert?
-      // no courses to optimize
-      // over course limit MAX_NUMBER
+    if (coursePlan.length === 0 || coursePlan.length > MAXIMUM_COURSE_PLAN) {
+      const alertType = coursePlan.length === 0 ? 0 : 1;
+      dispatch(alertsActions.alertCoursePlan({ alertType: alertType }));
       return;
     }
     const updatedCoursePlan = addCourseIDToCourseList(coursePlan);
@@ -456,9 +453,8 @@ const SideBar = () => {
     );
     const schedules = findTopSchedules(updatedCoursePlan, lockedSections);
 
-    // console.log(lockedSections, schedules);
     if (schedules.length === 0) {
-      console.error("no feasible schedule found");
+      dispatch(alertsActions.alertCoursePlan({ alertType: 2 }));
       return;
     }
 
@@ -526,11 +522,22 @@ const SideBar = () => {
         onDragEnd={() => handleDragEnd("masterSlotCourses")}
         onDragOver={handleDragOver}
         style={{
-          backgroundColor: isCoursePlanDragging ? "lightblue" : "white",
+          backgroundColor: isDarkMode
+            ? isCoursePlanDragging
+              ? "#3F4246"
+              : "transparent"
+            : isCoursePlanDragging
+            ? "lightblue"
+            : "transparent",
+          // backgroundColor: isCoursePlanDragging
+          //   ? "lightblue"
+          //   : isDarkMode
+          //   ? "#1d1e22"
+          //   : "white",
           transition: "background-color 0.3s ease",
           borderBottom: "2px solid black",
           minHeight: "200px",
-          padding: "16px",
+          padding: "6px",
           borderTopLeftRadius: "20px",
           borderTopRightRadius: "20px",
         }}
@@ -585,9 +592,7 @@ const SideBar = () => {
               justifyContent: "center",
             }}
           >
-            <button style={{ border: "none" }} onClick={handleCreateClick}>
-              Create
-            </button>
+            <button onClick={handleCreateClick}>Create</button>
             <button onClick={handleAddAllClick}>Add All</button>
           </div>
         </div>
@@ -598,8 +603,14 @@ const SideBar = () => {
           onDragOver={handleDragOver}
           style={{
             minHeight: "200px",
-            padding: "16px",
-            backgroundColor: isMasterCourseDragging ? "lightblue" : "white",
+            padding: "6px",
+            backgroundColor: isDarkMode
+              ? isMasterCourseDragging
+                ? "#3F4246"
+                : "#1d1e22"
+              : isMasterCourseDragging
+              ? "lightblue"
+              : "white",
             transition: "background-color 0.3s ease",
             borderRadius: "20px",
             display: "flex",
