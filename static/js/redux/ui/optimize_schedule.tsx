@@ -1,6 +1,5 @@
 // Helper functions for scheduling courses
 // Define interfaces for the course and section structure
-import { section } from "../__fixtures__/state";
 import { DenormalizedCourse, Section } from "../constants/commonTypes";
 
 export function timeToMinutes(time: string): number {
