@@ -110,9 +110,7 @@ const SideBar = () => {
   const theme = useAppSelector(selectTheme);
   const isDarkMode = theme && theme.name && theme.name === "dark";
 
-  // TODO:
   // update https://semesterly-v2.readthedocs.io/en/latest/frontend.html
-  // fix half semesters planning
 
   useEffect(() => {
     const updatedMasterSlotList: number[] = [];
@@ -137,7 +135,7 @@ const SideBar = () => {
       true,
       "masterSlotCourses"
     );
-  }, [mandatoryCourses, masterSlotCourses]);
+  }, [masterSlotCourses]);
 
   useEffect(() => {
     createMasterSlots(
@@ -148,7 +146,20 @@ const SideBar = () => {
       false, // set delete button for course plan
       "coursePlan"
     );
-  }, [mandatoryCourses, coursePlan]);
+  }, [coursePlan]);
+
+  useEffect(() => {
+    setCoursePlan((prevCoursePlan) =>
+      prevCoursePlan.filter((course) =>
+        mandatoryCourses.some((mandatoryCourse) => mandatoryCourse.id === course.id)
+      )
+    );
+    setMasterSlotCourses((prevMasteSlots) =>
+      prevMasteSlots.filter((course) =>
+        mandatoryCourses.some((mandatoryCourse) => mandatoryCourse.id === course.id)
+      )
+    );
+  }, [mandatoryCourses]);
 
   const currentSections = useMemo(() => {
     return timetable.slots
@@ -451,7 +462,9 @@ const SideBar = () => {
     const lockedSections = currentSections.filter((section) =>
       masterSlotCourses.some((course) => course.id === section.course_id)
     );
-    const schedules = findTopSchedules(updatedCoursePlan, lockedSections);
+
+    const policy = isChecked ? 1 : 0;
+    const schedules = findTopSchedules(updatedCoursePlan, lockedSections, policy);
 
     if (schedules.length === 0) {
       dispatch(alertsActions.alertCoursePlan({ alertType: 2 }));
@@ -470,6 +483,12 @@ const SideBar = () => {
   const nextSchedule = () => {};
 
   const prevSchedule = () => {};
+
+  const [isChecked, setIsChecked] = useState(false);
+
+  const handleToggle = () => {
+    setIsChecked((prev) => !prev); // Toggle the state
+  };
 
   return (
     <div
@@ -522,22 +541,15 @@ const SideBar = () => {
         onDragEnd={() => handleDragEnd("masterSlotCourses")}
         onDragOver={handleDragOver}
         style={{
-          backgroundColor: isDarkMode
-            ? isCoursePlanDragging
+          backgroundColor: isCoursePlanDragging
+            ? isDarkMode
               ? "#3F4246"
-              : "transparent"
-            : isCoursePlanDragging
-            ? "lightblue"
+              : "lightblue"
             : "transparent",
-          // backgroundColor: isCoursePlanDragging
-          //   ? "lightblue"
-          //   : isDarkMode
-          //   ? "#1d1e22"
-          //   : "white",
           transition: "background-color 0.3s ease",
           borderBottom: "2px solid black",
           minHeight: "200px",
-          padding: "6px",
+          padding: masterSlots.length === 0 && coursePlan.length === 0 ? "2px" : "8px",
           borderTopLeftRadius: "20px",
           borderTopRightRadius: "20px",
         }}
@@ -596,6 +608,27 @@ const SideBar = () => {
             <button onClick={handleAddAllClick}>Add All</button>
           </div>
         </div>
+        <div className="flex flex-row items-center space-x-2">
+          <input
+            type="checkbox"
+            id="toggle-radio"
+            checked={isChecked}
+            onChange={handleToggle}
+            className="cursor-pointer"
+            style={{
+              width: "fit-content",
+              padding: "4px",
+              marginRight: "4px",
+            }}
+          />
+          <label
+            htmlFor="toggle-radio"
+            className="cursor-pointer select-none"
+            onClick={handleToggle}
+          >
+            Avoid Morning Class
+          </label>
+        </div>
 
         <div
           onDrop={(event) => handleDrop(event, "coursePlan")}
@@ -603,7 +636,7 @@ const SideBar = () => {
           onDragOver={handleDragOver}
           style={{
             minHeight: "200px",
-            padding: "6px",
+            padding: "8px",
             backgroundColor: isDarkMode
               ? isMasterCourseDragging
                 ? "#3F4246"
