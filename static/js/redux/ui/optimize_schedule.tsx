@@ -1,16 +1,12 @@
 // Helper functions for scheduling courses
-// Define interfaces for the course and section structure
 import { DenormalizedCourse, Section } from "../constants/commonTypes";
 
-export function timeToMinutes(time: string): number {
+function timeToMinutes(time: string): number {
   const [hours, minutes] = time.split(":").map(Number);
   return hours * 60 + minutes;
 }
 
 function isFeasible(schedule: Section[], newSection: Section): boolean {
-  // example:
-  // const startdate = newSection.offering_set[0].date_start;
-  // const enddate = newSection.offering_set[0].date_end;
   for (const section of schedule) {
     for (const newTime of newSection.offering_set) {
       for (const existingTime of section.offering_set) {
@@ -18,7 +14,7 @@ function isFeasible(schedule: Section[], newSection: Section): boolean {
           newTime.day === existingTime.day &&
           newTime.time_start < existingTime.time_end &&
           newTime.time_end > existingTime.time_start &&
-          // check if time overlapps
+          // check if time overlapps for half semester courses
           newTime.date_start <= existingTime.date_end &&
           newTime.date_end >= existingTime.date_start
         ) {
@@ -30,7 +26,7 @@ function isFeasible(schedule: Section[], newSection: Section): boolean {
   return true; // No overlaps
 }
 
-export function calculateTotalGaps(schedule: Section[]): number {
+function calculateTotalGaps(schedule: Section[]): number {
   const daySlots: Record<string, { start: number; end: number }[]> = {};
 
   schedule.forEach((section) => {
@@ -57,7 +53,7 @@ export function calculateTotalGaps(schedule: Section[]): number {
   return totalGaps;
 }
 
-export function getFeasibleSchedules(
+function getFeasibleSchedules(
   courses: DenormalizedCourse[],
   lockedSections: Section[]
 ): Section[][] {
@@ -95,6 +91,15 @@ function calculateEarlyClassAmounts(
   return amount;
 }
 
+/**
+ * Finds the top schedules based on a specified policy.
+ *
+ * @param {DenormalizedCourse[]} courses - Array of courses, where each course contains sections and their offerings.
+ * @param {Section[]} lockedSections - Array of sections that must be included in every feasible schedule.
+ * @param {number} policy - Ranking policy (0 for minimal gaps, 1 for minimal early classes).
+ * @param {number} topN - Number of top schedules to return.
+ * @returns {Array<{ schedule: Section[] }>} An array of objects containing the top schedules based on the given policy.
+ */
 export function findTopSchedules(
   courses: DenormalizedCourse[],
   lockedSections: Section[],
@@ -102,22 +107,26 @@ export function findTopSchedules(
   topN = 1 // number of schedules we want to return
 ): Array<{ schedule: Section[] }> {
   const combinations = getFeasibleSchedules(courses, lockedSections);
-  if (combinations.length === 0 || topN < 1) return [];
-  // Rank schedules by total gaps
-  if (policy == 0) {
-    const rankedSchedules = combinations
-      .map((schedule) => ({ schedule, totalGaps: calculateTotalGaps(schedule) }))
-      .sort((a, b) => a.totalGaps - b.totalGaps);
-    return rankedSchedules.slice(0, topN);
+  if (combinations.length === 0 || topN < 1) return []; // return if there's no feasible schedule
+  var rankedSchedules;
+
+  // handle policy cases
+  switch (policy) {
+    case 0:
+    default:
+      rankedSchedules = combinations
+        .map((schedule) => ({ schedule, totalGaps: calculateTotalGaps(schedule) }))
+        .sort((a, b) => a.totalGaps - b.totalGaps);
+      break;
+    case 1:
+      rankedSchedules = combinations
+        .map((schedule) => ({
+          schedule,
+          earlyClassAmounts: calculateEarlyClassAmounts(schedule, 10), // time <= 10 AM is early class
+        }))
+        .sort((a, b) => a.earlyClassAmounts - b.earlyClassAmounts);
+      break;
   }
 
-  // time <= 10 AM is early class
-  const avoidEarlySchedule = combinations
-    .map((schedule) => ({
-      schedule,
-      earlyClassAmounts: calculateEarlyClassAmounts(schedule, 10),
-    }))
-    .sort((a, b) => a.earlyClassAmounts - b.earlyClassAmounts);
-
-  return avoidEarlySchedule.slice(0, topN);
+  return rankedSchedules.slice(0, topN);
 }

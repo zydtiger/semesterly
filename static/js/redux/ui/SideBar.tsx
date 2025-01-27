@@ -80,8 +80,7 @@ const SideBar = () => {
     (state) => state.savingTimetable.activeTimetable
   );
 
-  const MAXIMUM_COURSE_PLAN = 15;
-
+  const MAXIMUM_COURSE_PLAN = 15; // max number of courses allowed in course plan
   const getShareLink = (courseCode: string) => getCourseShareLink(courseCode, semester);
   const timetableCourses = useAppSelector((state) => getActiveTimetableCourses(state));
   const events = useAppSelector((state) => state.customEvents.events);
@@ -107,58 +106,11 @@ const SideBar = () => {
   // masterSlotCourses stores all the courses in the course list, excluding the ones the user puts in the optimization section
   const [masterSlotCourses, setMasterSlotCourses] = useState([]);
 
+  // attribute to check if is or isn't dark mode
   const theme = useAppSelector(selectTheme);
   const isDarkMode = theme && theme.name && theme.name === "dark";
 
-  useEffect(() => {
-    const updatedMasterSlotList: number[] = [];
-    const updatedMasterSlotCourses: (Course | DenormalizedCourse)[] = [];
-    mandatoryCourses.map((course) => {
-      if (!coursePlan.some((plannedCourse) => plannedCourse.id === course.id)) {
-        updatedMasterSlotCourses.push(course);
-        updatedMasterSlotList.push(course.id);
-      }
-    });
-    setMasterSlotList(updatedMasterSlotList);
-    if (coursePlan.length + masterSlotCourses.length != mandatoryCourses.length)
-      setMasterSlotCourses(updatedMasterSlotCourses);
-  }, [mandatoryCourses]);
-
-  useEffect(() => {
-    createMasterSlots(
-      masterSlotCourses,
-      setMasterSlots,
-      true,
-      true,
-      true,
-      "masterSlotCourses"
-    );
-  }, [masterSlotCourses]);
-
-  useEffect(() => {
-    createMasterSlots(
-      coursePlan,
-      setCoursePlanMasterSlots,
-      true,
-      false,
-      false, // set delete button for course plan
-      "coursePlan"
-    );
-  }, [coursePlan]);
-
-  useEffect(() => {
-    setCoursePlan((prevCoursePlan) =>
-      prevCoursePlan.filter((course) =>
-        mandatoryCourses.some((mandatoryCourse) => mandatoryCourse.id === course.id)
-      )
-    );
-    setMasterSlotCourses((prevMasteSlots) =>
-      prevMasteSlots.filter((course) =>
-        mandatoryCourses.some((mandatoryCourse) => mandatoryCourse.id === course.id)
-      )
-    );
-  }, [mandatoryCourses]);
-
+  // helper to store the current selected sections
   const currentSections = useMemo(() => {
     return timetable.slots
       .map((slot) => {
@@ -181,6 +133,61 @@ const SideBar = () => {
       .filter((section) => section !== null);
   }, [timetable.slots, mandatoryCourses]);
 
+  // hook that updates master slot courses
+  useEffect(() => {
+    createMasterSlots(
+      masterSlotCourses,
+      setMasterSlots,
+      true,
+      true,
+      true,
+      "masterSlotCourses"
+    );
+  }, [masterSlotCourses]);
+
+  // hook that updates course plan courses
+  useEffect(() => {
+    createMasterSlots(
+      coursePlan,
+      setCoursePlanMasterSlots,
+      true,
+      false,
+      false, // set delete button for course plan
+      "coursePlan"
+    );
+  }, [coursePlan]);
+
+  // hook that updates the master course and the course plan
+  // TODO: simplify the logic here
+  useEffect(() => {
+    const updatedMasterSlotList: number[] = [];
+    const updatedMasterSlotCourses: (Course | DenormalizedCourse)[] = [];
+    // in case of newly added courses, also add them to master slot
+    mandatoryCourses.map((course) => {
+      if (!coursePlan.some((plannedCourse) => plannedCourse.id === course.id)) {
+        updatedMasterSlotCourses.push(course);
+        updatedMasterSlotList.push(course.id);
+      }
+    });
+    setMasterSlotList(updatedMasterSlotList);
+    // this was to prevent a bug that would add courses twice in master slots
+    if (coursePlan.length + masterSlotCourses.length != mandatoryCourses.length)
+      setMasterSlotCourses(updatedMasterSlotCourses);
+
+    // in case of deletion of a course, make sure it's properly deleted from course plan and master slot
+    setCoursePlan((prevCoursePlan) =>
+      prevCoursePlan.filter((course) =>
+        mandatoryCourses.some((mandatoryCourse) => mandatoryCourse.id === course.id)
+      )
+    );
+    setMasterSlotCourses((prevMasteSlots) =>
+      prevMasteSlots.filter((course) =>
+        mandatoryCourses.some((mandatoryCourse) => mandatoryCourse.id === course.id)
+      )
+    );
+  }, [mandatoryCourses]);
+
+  // helper function to create master slot components
   const createMasterSlots = (
     courses: DenormalizedCourse[],
     setSlots: React.Dispatch<React.SetStateAction<any>>,
@@ -490,13 +497,7 @@ const SideBar = () => {
   };
 
   return (
-    <div
-      className="side-bar no-print"
-      style={{
-        overflowY: "auto",
-        overflowX: "hidden",
-      }}
-    >
+    <div className="side-bar no-print overflow-y-auto overflow-x-hidden">
       <div className="sb-name">
         <TimetableNameInput />
         <ClickOutHandler onClickOut={hideDropdown}>
@@ -613,8 +614,8 @@ const SideBar = () => {
           <input
             type="checkbox"
             id="toggle-radio"
-            checked={isChecked}
-            onChange={handleToggle}
+            checked={isChecked} // Bound to state
+            onChange={handleToggle} // Handles the toggle
             className="cursor-pointer"
             style={{
               width: "fit-content",
@@ -625,7 +626,7 @@ const SideBar = () => {
           <label
             htmlFor="toggle-radio"
             className="cursor-pointer select-none"
-            onClick={handleToggle}
+            style={{ userSelect: "none" }}
           >
             Avoid Morning Class
           </label>
@@ -653,7 +654,7 @@ const SideBar = () => {
           }}
         >
           {coursePlan.length > 0 ? (
-            <>{coursePlanMasterSlots}</>
+            coursePlanMasterSlots
           ) : (
             <p
               style={{
@@ -671,7 +672,6 @@ const SideBar = () => {
   );
 };
 
-// TODO: should be these values by default in the state
 SideBar.defaultProps = {
   savedTimetables: null,
   avgRating: 0,
