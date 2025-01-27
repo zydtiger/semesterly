@@ -110,8 +110,6 @@ const SideBar = () => {
   const theme = useAppSelector(selectTheme);
   const isDarkMode = theme && theme.name && theme.name === "dark";
 
-  // update https://semesterly-v2.readthedocs.io/en/latest/frontend.html
-
   useEffect(() => {
     const updatedMasterSlotList: number[] = [];
     const updatedMasterSlotCourses: (Course | DenormalizedCourse)[] = [];
@@ -480,9 +478,10 @@ const SideBar = () => {
     setMasterSlotCourses([]);
   };
 
-  const nextSchedule = () => {};
-
-  const prevSchedule = () => {};
+  const handleRemoveAllClick = () => {
+    setMasterSlotCourses(mandatoryCourses);
+    setCoursePlan([]);
+  };
 
   const [isChecked, setIsChecked] = useState(false);
 
@@ -561,6 +560,7 @@ const SideBar = () => {
             <div
               style={{
                 display: "flex",
+                flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
                 height: "200px",
@@ -575,6 +575,7 @@ const SideBar = () => {
               >
                 Drag courses back here to lock in your section choice!
               </p>
+              <button onClick={handleRemoveAllClick}>Remove All</button>
             </div>
           )
         ) : (
