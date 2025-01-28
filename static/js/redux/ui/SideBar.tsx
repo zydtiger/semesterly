@@ -49,7 +49,7 @@ import { peerModalActions } from "../state/slices/peerModalSlice";
 import CreateNewTimetableButton from "./CreateNewTimetableButton";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import { findTopSchedules } from "./optimize_schedule";
+import findTopSchedules from "./optimize_schedule";
 
 /**
  * This component displays the timetable name, allows you to switch between timetables,
@@ -63,9 +63,10 @@ const SideBar = () => {
   const timetable = useAppSelector(getActiveTimetable);
   const mandatoryCourses: DenormalizedCourse[] = useAppSelector(
     (state) =>
-      useMemo(() => {
-        return getCoursesFromSlots(state, timetable.slots);
-      }, [state, timetable.slots]) // Only change when slots or state changes
+      useMemo(
+        () => getCoursesFromSlots(state, timetable.slots),
+        [state, timetable.slots]
+      ) // Only change when slots or state changes
   );
   const semester = useAppSelector(getCurrentSemester);
   const savedTimetablesState = useAppSelector(
@@ -111,13 +112,17 @@ const SideBar = () => {
   const isDarkMode = theme && theme.name && theme.name === "dark";
 
   // helper to store the current selected sections
-  const currentSections = useMemo(() => {
-    return timetable.slots
-      .map((slot) => {
-        const course = mandatoryCourses.find((course) => course.id === slot.course);
-        if (course) {
+  const currentSections = useMemo(
+    () =>
+      timetable.slots
+        .map((slot) => {
+          const course = mandatoryCourses.find(
+            (mandatoryCourse) => mandatoryCourse.id === slot.course
+          );
+          if (!course) return null;
+
           const section = course.sections.find(
-            (section) => section.id === slot.section
+            (courseSection) => courseSection.id === slot.section
           );
           return section
             ? {
@@ -127,11 +132,10 @@ const SideBar = () => {
                 course_id: course.id,
               }
             : null;
-        }
-        return null;
-      })
-      .filter((section) => section !== null);
-  }, [timetable.slots, mandatoryCourses]);
+        })
+        .filter((section) => section !== null),
+    [timetable.slots, mandatoryCourses]
+  );
 
   // hook that updates master slot courses
   useEffect(() => {
@@ -163,7 +167,7 @@ const SideBar = () => {
     const updatedMasterSlotList: number[] = [];
     const updatedMasterSlotCourses: (Course | DenormalizedCourse)[] = [];
     // in case of newly added courses, also add them to master slot
-    mandatoryCourses.map((course) => {
+    mandatoryCourses.forEach((course) => {
       if (!coursePlan.some((plannedCourse) => plannedCourse.id === course.id)) {
         updatedMasterSlotCourses.push(course);
         updatedMasterSlotList.push(course.id);
@@ -171,7 +175,7 @@ const SideBar = () => {
     });
     setMasterSlotList(updatedMasterSlotList);
     // this was to prevent a bug that would add courses twice in master slots
-    if (coursePlan.length + masterSlotCourses.length != mandatoryCourses.length)
+    if (coursePlan.length + masterSlotCourses.length !== mandatoryCourses.length)
       setMasterSlotCourses(updatedMasterSlotCourses);
 
     // in case of deletion of a course, make sure it's properly deleted from course plan and master slot
@@ -198,9 +202,12 @@ const SideBar = () => {
   ) => {
     const updatedMasterSlotList: number[] = [];
     const newMasterSlots = courses.map((course) => {
-      if (
-        mandatoryCourses.some((mandatoryCourse) => mandatoryCourse.id === course.id)
-      ) {
+      // Check if the course is in mandatoryCourses
+      const isMandatory = mandatoryCourses.some(
+        (mandatoryCourse) => mandatoryCourse.id === course.id
+      );
+
+      if (isMandatory) {
         const colourIndex =
           course.id in courseToColourIndex
             ? courseToColourIndex[course.id]
@@ -211,10 +218,10 @@ const SideBar = () => {
           (slot) => slot.course === course.id
         )?.section;
 
-        // Create a new list for masterSlotList
+        // Add course ID to master slot list
         updatedMasterSlotList.push(course.id);
 
-        // Only render the course if it's still in mandatoryCourses
+        // Return the MasterSlot component
         return (
           <MasterSlot
             key={course.id}
@@ -233,15 +240,20 @@ const SideBar = () => {
               !isCoursePlanDragging
             }
             draggable={showDrag}
-            onDragStart={(course) => handleDragStart(course, target)}
+            onDragStart={(draggedCourse) => handleDragStart(draggedCourse, target)}
             onDragEnd={() => handleDragEnd(target)}
             showLink={showLink}
             hideCloseButton={!showRemove}
           />
         );
       }
+
+      // Return null if the course is not mandatory
+      return null;
     });
-    setSlots(newMasterSlots);
+
+    // Filter out null values before updating slots
+    setSlots(newMasterSlots.filter((slot) => slot !== null));
   };
 
   const hideDropdown = () => {
@@ -446,15 +458,14 @@ const SideBar = () => {
 
   const addCourseIDToCourseList = (
     courses: DenormalizedCourse[]
-  ): DenormalizedCourse[] => {
-    return courses.map((course: DenormalizedCourse) => ({
+  ): DenormalizedCourse[] =>
+    courses.map((course) => ({
       ...course,
       sections: course.sections.map((section: Section) => ({
         ...section,
         course_id: course.id,
       })),
     }));
-  };
 
   const handleCreateClick = () => {
     if (coursePlan.length === 0 || coursePlan.length > MAXIMUM_COURSE_PLAN) {
@@ -639,13 +650,11 @@ const SideBar = () => {
           style={{
             minHeight: "200px",
             padding: "8px",
-            backgroundColor: isDarkMode
-              ? isMasterCourseDragging
+            backgroundColor: isMasterCourseDragging
+              ? isDarkMode
                 ? "#3F4246"
-                : "#1d1e22"
-              : isMasterCourseDragging
-              ? "lightblue"
-              : "white",
+                : "lightblue"
+              : "transparent",
             transition: "background-color 0.3s ease",
             borderRadius: "20px",
             display: "flex",

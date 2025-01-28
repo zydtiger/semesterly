@@ -7,23 +7,20 @@ function timeToMinutes(time: string): number {
 }
 
 function isFeasible(schedule: Section[], newSection: Section): boolean {
-  for (const section of schedule) {
-    for (const newTime of newSection.offering_set) {
-      for (const existingTime of section.offering_set) {
-        if (
+  return !schedule.some((section) =>
+    newSection.offering_set.some((newTime) =>
+      section.offering_set.some((existingTime) => {
+        return (
           newTime.day === existingTime.day &&
           newTime.time_start < existingTime.time_end &&
           newTime.time_end > existingTime.time_start &&
-          // check if time overlapps for half semester courses
+          // Check if time overlaps for half-semester courses
           newTime.date_start <= existingTime.date_end &&
           newTime.date_end >= existingTime.date_start
-        ) {
-          return false; // Overlap detected
-        }
-      }
-    }
-  }
-  return true; // No overlaps
+        );
+      })
+    )
+  );
 }
 
 function calculateTotalGaps(schedule: Section[]): number {
@@ -31,11 +28,11 @@ function calculateTotalGaps(schedule: Section[]): number {
 
   schedule.forEach((section) => {
     section.offering_set.forEach((time) => {
-      const { day, time_start, time_end } = time;
+      const { day } = time;
       if (!daySlots[day]) daySlots[day] = [];
       daySlots[day].push({
-        start: timeToMinutes(time_start),
-        end: timeToMinutes(time_end),
+        start: timeToMinutes(time.time_start),
+        end: timeToMinutes(time.time_end),
       });
     });
   });
@@ -65,10 +62,10 @@ function getFeasibleSchedules(
       return;
     }
     const currentCourse = courses[courseIndex];
-    for (const section of currentCourse.sections) {
+    currentCourse.sections.forEach((section) => {
       if (isFeasible([...currentSchedule, ...lockedSections], section))
         backtrack([...currentSchedule, section], courseIndex + 1);
-    }
+    });
   }
   backtrack(lockedSections, 0);
   return schedules;
@@ -78,9 +75,9 @@ function calculateEarlyClassAmounts(
   schedule: Section[],
   earlyThreshold: number
 ): number {
-  var amount = 0;
-  schedule.map((section) => {
-    section.offering_set.map((offering) => {
+  let amount = 0;
+  schedule.forEach((section) => {
+    section.offering_set.forEach((offering) => {
       const [hours, minutes] = offering.time_start.split(":").map(Number);
       const start = hours + minutes / 60;
       if (start < earlyThreshold) {
@@ -100,15 +97,16 @@ function calculateEarlyClassAmounts(
  * @param {number} topN - Number of top schedules to return.
  * @returns {Array<{ schedule: Section[] }>} An array of objects containing the top schedules based on the given policy.
  */
-export function findTopSchedules(
+function findTopSchedules(
   courses: DenormalizedCourse[],
   lockedSections: Section[],
   policy = 0, // 0 for minimal gaps, 1 for minimal early class
   topN = 1 // number of schedules we want to return
 ): Array<{ schedule: Section[] }> {
+  let rankedSchedules; // output schedule
+
   const combinations = getFeasibleSchedules(courses, lockedSections);
   if (combinations.length === 0 || topN < 1) return []; // return if there's no feasible schedule
-  var rankedSchedules;
 
   // handle policy cases
   switch (policy) {
@@ -130,3 +128,5 @@ export function findTopSchedules(
 
   return rankedSchedules.slice(0, topN);
 }
+
+export default findTopSchedules;

@@ -193,18 +193,14 @@ const MasterSlot = (props: MasterSlotProps) => {
               event.dataTransfer.setData("text/plain", props.course.code);
               props.onDragStart(props.course); // Call the onDragStart prop
             }
-          : () => {
-              undefined;
-            }
+          : () => {}
       }
       onDragEnd={
         props.draggable
           ? () => {
               props.onDragEnd(); // Call the onDragEnd prop
             }
-          : () => {
-              undefined;
-            }
+          : () => {}
       }
     >
       <div
