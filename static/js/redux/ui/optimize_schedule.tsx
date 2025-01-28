@@ -9,16 +9,15 @@ function timeToMinutes(time: string): number {
 function isFeasible(schedule: Section[], newSection: Section): boolean {
   return !schedule.some((section) =>
     newSection.offering_set.some((newTime) =>
-      section.offering_set.some((existingTime) => {
-        return (
+      section.offering_set.some(
+        (existingTime) =>
           newTime.day === existingTime.day &&
           newTime.time_start < existingTime.time_end &&
           newTime.time_end > existingTime.time_start &&
           // Check if time overlaps for half-semester courses
           newTime.date_start <= existingTime.date_end &&
           newTime.date_end >= existingTime.date_start
-        );
-      })
+      )
     )
   );
 }

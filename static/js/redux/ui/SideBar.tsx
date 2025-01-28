@@ -240,7 +240,7 @@ const SideBar = () => {
               !isCoursePlanDragging
             }
             draggable={showDrag}
-            onDragStart={(draggedCourse) => handleDragStart(draggedCourse, target)}
+            onDragStart={(dragStartCourse) => handleDragStart(dragStartCourse, target)}
             onDragEnd={() => handleDragEnd(target)}
             showLink={showLink}
             hideCloseButton={!showRemove}
@@ -436,25 +436,23 @@ const SideBar = () => {
     event.preventDefault();
   };
 
-  const emptyMasterSlot = () => {
-    return (
-      <div className="empty-state">
-        <img
-          src={
-            curTheme.name === "light"
-              ? "/static/img/emptystates/masterslots.png"
-              : "/static/img/emptystates/masterslots-dark.png"
-          }
-          alt="No courses added."
-        />
-        <h4>Looks like you don&#39;t have any courses yet!</h4>
-        <h3>
-          Your selections will appear here along with credits, professors and friends in
-          the class
-        </h3>
-      </div>
-    );
-  };
+  const emptyMasterSlot = () => (
+    <div className="empty-state">
+      <img
+        src={
+          curTheme.name === "light"
+            ? "/static/img/emptystates/masterslots.png"
+            : "/static/img/emptystates/masterslots-dark.png"
+        }
+        alt="No courses added."
+      />
+      <h4>Looks like you don&#39;t have any courses yet!</h4>
+      <h3>
+        Your selections will appear here along with credits, professors and friends in
+        the class
+      </h3>
+    </div>
+  );
 
   const addCourseIDToCourseList = (
     courses: DenormalizedCourse[]
@@ -470,7 +468,7 @@ const SideBar = () => {
   const handleCreateClick = () => {
     if (coursePlan.length === 0 || coursePlan.length > MAXIMUM_COURSE_PLAN) {
       const alertType = coursePlan.length === 0 ? 0 : 1;
-      dispatch(alertsActions.alertCoursePlan({ alertType: alertType }));
+      dispatch(alertsActions.alertCoursePlan({ alertType }));
       return;
     }
     const updatedCoursePlan = addCourseIDToCourseList(coursePlan);
