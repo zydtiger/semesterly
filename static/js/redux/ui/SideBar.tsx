@@ -49,7 +49,7 @@ import { peerModalActions } from "../state/slices/peerModalSlice";
 import CreateNewTimetableButton from "./CreateNewTimetableButton";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import findTopSchedules from "./optimize_schedule";
+import findTopSchedules, { SchedulePolicy } from "./optimize_schedule";
 
 /**
  * This component displays the timetable name, allows you to switch between timetables,
@@ -477,7 +477,9 @@ const SideBar = () => {
       masterSlotCourses.some((course) => course.id === section.course_id)
     );
 
-    const policy = isChecked ? 1 : 0;
+    const policy = isChecked
+      ? SchedulePolicy.MINIMAL_EARLY_CLASSES
+      : SchedulePolicy.MINIMAL_GAPS;
     const schedules = findTopSchedules(updatedCoursePlan, lockedSections, policy);
 
     if (schedules.length === 0) {

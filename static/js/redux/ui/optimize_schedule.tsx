@@ -87,19 +87,24 @@ function calculateEarlyClassAmounts(
   return amount;
 }
 
+export enum SchedulePolicy {
+  MINIMAL_GAPS = 0,
+  MINIMAL_EARLY_CLASSES = 1,
+}
+
 /**
  * Finds the top schedules based on a specified policy.
  *
  * @param {DenormalizedCourse[]} courses - Array of courses, where each course contains sections and their offerings.
  * @param {Section[]} lockedSections - Array of sections that must be included in every feasible schedule.
- * @param {number} policy - Ranking policy (0 for minimal gaps, 1 for minimal early classes).
+ * @param {SchedulePolicy} policy - Ranking policy
  * @param {number} topN - Number of top schedules to return.
  * @returns {Array<{ schedule: Section[] }>} An array of objects containing the top schedules based on the given policy.
  */
 function findTopSchedules(
   courses: DenormalizedCourse[],
   lockedSections: Section[],
-  policy = 0, // 0 for minimal gaps, 1 for minimal early class
+  policy: SchedulePolicy = SchedulePolicy.MINIMAL_GAPS,
   topN = 1 // number of schedules we want to return
 ): Array<{ schedule: Section[] }> {
   let rankedSchedules; // output schedule
@@ -109,13 +114,13 @@ function findTopSchedules(
 
   // handle policy cases
   switch (policy) {
-    case 0:
+    case SchedulePolicy.MINIMAL_GAPS:
     default:
       rankedSchedules = combinations
         .map((schedule) => ({ schedule, totalGaps: calculateTotalGaps(schedule) }))
         .sort((a, b) => a.totalGaps - b.totalGaps);
       break;
-    case 1:
+    case SchedulePolicy.MINIMAL_EARLY_CLASSES:
       rankedSchedules = combinations
         .map((schedule) => ({
           schedule,
