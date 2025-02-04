@@ -93,12 +93,10 @@ const alertsSlice = createSlice({
     // New reducer for empty schedule alert
     alertCoursePlan: (
       state,
-      action: PayloadAction<{
-        alertType: keyof typeof AlertCoursePlanType;
-      }>
+      action: PayloadAction<{ alertType: AlertCoursePlanType }>
     ) => {
       state.alertCoursePlan = true;
-      state.alertCoursePlanType = AlertCoursePlanType[action.payload.alertType];
+      state.alertCoursePlanType = action.payload.alertType;
     },
     dismissAlertCoursePlan: (state) => {
       state.alertCoursePlan = false;

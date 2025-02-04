@@ -20,6 +20,7 @@ import MasterSlot from "./MasterSlot";
 import TimetableNameInput from "./TimetableNameInput";
 import CreditTicker from "./CreditTicker";
 import { alertsActions } from "../state/slices";
+import { AlertCoursePlanType } from "../state/slices";
 import { getNextAvailableColour } from "../util";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import {
@@ -467,7 +468,10 @@ const SideBar = () => {
 
   const handleCreateClick = () => {
     if (coursePlan.length === 0 || coursePlan.length > MAXIMUM_COURSE_PLAN) {
-      const alertType = coursePlan.length === 0 ? "EMPTY" : "EXCEEDS_LIMIT";
+      const alertType =
+        coursePlan.length === 0
+          ? AlertCoursePlanType.EMPTY
+          : AlertCoursePlanType.EXCEEDS_LIMIT;
       dispatch(alertsActions.alertCoursePlan({ alertType }));
       return;
     }
@@ -483,7 +487,11 @@ const SideBar = () => {
     const schedules = findTopSchedules(updatedCoursePlan, lockedSections, policy);
 
     if (schedules.length === 0) {
-      dispatch(alertsActions.alertCoursePlan({ alertType: "NO_FEASIBLE_SCHEDULE" }));
+      dispatch(
+        alertsActions.alertCoursePlan({
+          alertType: AlertCoursePlanType.NO_FEASIBLE_SCHEDULE,
+        })
+      );
       return;
     }
 
