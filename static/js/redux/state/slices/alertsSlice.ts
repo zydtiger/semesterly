@@ -1,7 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { alertConflict, alertTimeTableExists } from "../../actions/initActions";
 import { Timetable } from "../../constants/commonTypes";
-import TimetableExistsAlert from "../../ui/alerts/timetable_exists_alert";
+
+export enum AlertCoursePlanType {
+  EMPTY = 0,
+  EXCEEDS_LIMIT = 1,
+  NO_FEASIBLE_SCHEDULE = 2,
+  UNKNOWN = 3,
+}
 
 interface AlertsSliceState {
   alertConflict: boolean;
@@ -88,11 +94,11 @@ const alertsSlice = createSlice({
     alertCoursePlan: (
       state,
       action: PayloadAction<{
-        alertType: number;
+        alertType: keyof typeof AlertCoursePlanType;
       }>
     ) => {
       state.alertCoursePlan = true;
-      state.alertCoursePlanType = action.payload.alertType;
+      state.alertCoursePlanType = AlertCoursePlanType[action.payload.alertType];
     },
     dismissAlertCoursePlan: (state) => {
       state.alertCoursePlan = false;

@@ -467,7 +467,7 @@ const SideBar = () => {
 
   const handleCreateClick = () => {
     if (coursePlan.length === 0 || coursePlan.length > MAXIMUM_COURSE_PLAN) {
-      const alertType = coursePlan.length === 0 ? 0 : 1;
+      const alertType = coursePlan.length === 0 ? "EMPTY" : "EXCEEDS_LIMIT";
       dispatch(alertsActions.alertCoursePlan({ alertType }));
       return;
     }
@@ -481,7 +481,7 @@ const SideBar = () => {
     const schedules = findTopSchedules(updatedCoursePlan, lockedSections, policy);
 
     if (schedules.length === 0) {
-      dispatch(alertsActions.alertCoursePlan({ alertType: 2 }));
+      dispatch(alertsActions.alertCoursePlan({ alertType: "NO_FEASIBLE_SCHEDULE" }));
       return;
     }
 
