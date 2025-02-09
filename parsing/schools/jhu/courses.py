@@ -231,9 +231,9 @@ class Parser(BaseParser):
         self.verbosity = verbosity
 
         # Get the last 10 years
-        current_year = datetime.now().year 
+        current_year = datetime.now().year
         years = {str(year) for year in range(current_year - 10, current_year + 1)}
-       
+
         terms = {"Spring", "Fall", "Summer", "Intersession"}
 
         years_and_terms = dict_filter_by_dict(

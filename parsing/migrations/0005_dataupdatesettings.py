@@ -4,23 +4,30 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('parsing', '0004_alter_dataupdate_update_type'),
+        ("parsing", "0004_alter_dataupdate_update_type"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='DataUpdateSettings',
+            name="DataUpdateSettings",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('year', models.IntegerField()),
-                ('term', models.CharField(max_length=100)),
-                ('active', models.BooleanField(default=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("year", models.IntegerField()),
+                ("term", models.CharField(max_length=100)),
+                ("active", models.BooleanField(default=True)),
             ],
             options={
-                'verbose_name': 'Data Update Settings',
-                'verbose_name_plural': 'Data Update Settings',
+                "verbose_name": "Data Update Settings",
+                "verbose_name_plural": "Data Update Settings",
             },
         ),
     ]

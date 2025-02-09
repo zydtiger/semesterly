@@ -4,15 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('parsing', '0005_dataupdatesettings'),
+        ("parsing", "0005_dataupdatesettings"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='dataupdatesettings',
-            name='term',
-            field=models.CharField(choices=[('Spring', 'Spring'), ('Fall', 'Fall')], default='Fall', help_text='Select either Spring or Fall term', max_length=10),
+            model_name="dataupdatesettings",
+            name="term",
+            field=models.CharField(
+                choices=[("Spring", "Spring"), ("Fall", "Fall")],
+                default="Fall",
+                help_text="Select either Spring or Fall term",
+                max_length=10,
+            ),
         ),
     ]

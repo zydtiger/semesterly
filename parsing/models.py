@@ -54,6 +54,7 @@ class DataUpdate(models.Model):
         max_length=1, choices=UPDATE_TYPE, default=MISCELLANEOUS
     )
 
+
 class DataUpdateSettings(models.Model):
     """
     Stores the settings for the data update used by the ingestion process.
@@ -64,20 +65,20 @@ class DataUpdateSettings(models.Model):
         active (BooleanField): whether to perform the update
     """
 
-    SPRING = 'Spring'
-    FALL = 'Fall'
+    SPRING = "Spring"
+    FALL = "Fall"
     TERM_CHOICES = [
-        (SPRING, 'Spring'),
-        (FALL, 'Fall'),
+        (SPRING, "Spring"),
+        (FALL, "Fall"),
     ]
-    
+
     term = models.CharField(
         max_length=10,
         choices=TERM_CHOICES,
         default=FALL,
-        help_text='Select either Spring or Fall term'
+        help_text="Select either Spring or Fall term",
     )
-    
+
     year = models.IntegerField()
     active = models.BooleanField(default=True)
 
@@ -91,21 +92,15 @@ class DataUpdateSettings(models.Model):
     def load(cls):
         exists = cls.objects.exists()
         if not exists:
-            cls.objects.create(
-                year=datetime.now().year,
-                term="Spring",
-                active=True
-            )
-            
+            cls.objects.create(year=datetime.now().year, term="Spring", active=True)
+
         return cls.objects.first()
 
     def clean(self):
         super().clean()
         if self.term not in [self.SPRING, self.FALL]:
-            raise ValidationError({'term': 'Term must be either Spring or Fall'})
+            raise ValidationError({"term": "Term must be either Spring or Fall"})
 
     class Meta:
-        verbose_name = 'Data Update Settings'
-        verbose_name_plural = 'Data Update Settings'
-
-    
+        verbose_name = "Data Update Settings"
+        verbose_name_plural = "Data Update Settings"

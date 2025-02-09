@@ -40,9 +40,9 @@ class Command(BaseCommand):
         """
         ingest_args(parser)
         parser.add_argument(
-            '--use-admin-settings',
-            action='store_true',
-            help='Use DataUpdateSettings from admin panel for JHU parsing'
+            "--use-admin-settings",
+            action="store_true",
+            help="Use DataUpdateSettings from admin panel for JHU parsing",
         )
 
     def handle(self, *args, **options):
@@ -142,21 +142,19 @@ class Command(BaseCommand):
     @staticmethod
     def _resolve_years_and_terms(options):
         # Add check for admin settings
-        if options.get('use_admin_settings') and 'jhu' in options['schools']:
+        if options.get("use_admin_settings") and "jhu" in options["schools"]:
             settings = DataUpdateSettings.load()
             if settings.active:
-                return {
-                    str(settings.year): [settings.term]
-                }
-            return {} # if not active, don't parse anything
-            
-        if options.get('years_and_terms') is not None:
-            return options['years_and_terms']
+                return {str(settings.year): [settings.term]}
+            return {}  # if not active, don't parse anything
+
+        if options.get("years_and_terms") is not None:
+            return options["years_and_terms"]
 
         # Construct years and terms dictionary
         years_and_terms = {}
-        for year in options['years']:
+        for year in options["years"]:
             year = years_and_terms.setdefault(year, [])
-            for term in options['terms']:
+            for term in options["terms"]:
                 year.append(term)
         return years_and_terms
