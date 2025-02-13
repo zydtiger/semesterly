@@ -12,6 +12,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 */
 
+/* eslint camelcase: "off" */
+
 import fetch from "isomorphic-fetch";
 import Cookie from "js-cookie";
 import { getActiveTimetable, getCurrentSemester, getDenormTimetable } from "../state";
@@ -396,7 +398,7 @@ export const updateCourses = (courses) => (dispatch, getState) => {
 
   // Prepare updated courses for adding
   const updatedCourses = courses.map(({ course_id, meeting_section }) => ({
-    course_id: course_id,
+    course_id,
     section_codes: [meeting_section], // Ensure this structure matches backend expectations
   }));
 

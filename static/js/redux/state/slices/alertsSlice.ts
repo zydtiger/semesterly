@@ -2,6 +2,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { alertConflict, alertTimeTableExists } from "../../actions/initActions";
 import { Timetable } from "../../constants/commonTypes";
 
+/* eslint no-shadow: "off" */
+
 export enum AlertCoursePlanType {
   EMPTY = 0,
   EXCEEDS_LIMIT = 1,

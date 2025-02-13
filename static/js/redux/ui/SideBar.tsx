@@ -19,8 +19,7 @@ import ClickOutHandler from "react-onclickout";
 import MasterSlot from "./MasterSlot";
 import TimetableNameInput from "./TimetableNameInput";
 import CreditTicker from "./CreditTicker";
-import { alertsActions } from "../state/slices";
-import { AlertCoursePlanType } from "../state/slices";
+import { alertsActions , AlertCoursePlanType } from "../state/slices";
 import { getNextAvailableColour } from "../util";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import {
@@ -112,7 +111,11 @@ const SideBar = () => {
   const theme = useAppSelector(selectTheme);
   const isDarkMode = theme && theme.name && theme.name === "dark";
 
-  // helper to store the current selected sections
+  // state to keep track of active background color
+  const [backgroundColorCourseConfig, setBackgroundColorCourseConfig] = useState("transparent")
+  const [backgroundColorMasterCourseDragging, setBackgroundColorMasterCourseDragging] = useState("transparent")
+
+  // helper to store the current selected sectionsW
   const currentSections = useMemo(
     () =>
       timetable.slots
@@ -355,7 +358,7 @@ const SideBar = () => {
 
   // Handles keypresses: "Up" decrements hoveredCourse, "Down" increments hoveredCourse (both with bounds).
   const handleKeyPress = useCallback(
-    (e) => {
+    (e: any) => {
       if (e.key === "ArrowUp") {
         if (hoveredCourse > -1) {
           setHoveredCourse((prevHoveredCourse) => prevHoveredCourse - 1);
@@ -515,6 +518,56 @@ const SideBar = () => {
     setIsChecked((prev) => !prev); // Toggle the state
   };
 
+  useEffect(() => {
+    if (isCoursePlanDragging) {
+      setBackgroundColorCourseConfig(isDarkMode ? "#3F4246" : "lightblue")
+    } else {
+      setBackgroundColorCourseConfig("transparent")
+    }
+  }, [isCoursePlanDragging, isDarkMode])
+
+  useEffect(() => {
+    if (isCoursePlanDragging) {
+      setBackgroundColorMasterCourseDragging(isDarkMode ? "#3F4246" : "lightblue")
+    } else {
+      setBackgroundColorMasterCourseDragging("transparent")
+    }
+  }, [isMasterCourseDragging, isDarkMode])
+
+  const masterSlotsColumn = (masterSlotsLen: number, coursePlanLen: number) => {
+    if (masterSlotsLen === 0 && coursePlanLen === 0) {
+      return emptyMasterSlot();
+    }
+
+    if (masterSlotsLen === 0) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "200px",
+          }}
+        >
+          <p
+            style={{
+              lineHeight: "1.5",
+              textAlign: "center",
+              userSelect: "none",
+            }}
+          >
+            Drag courses back here to lock in your section choice!
+          </p>
+          <button onClick={handleRemoveAllClick}>Remove All</button>
+        </div>
+      )
+    }
+
+    return masterSlots
+
+  }
+
   return (
     <div className="side-bar no-print overflow-y-auto overflow-x-hidden">
       <div className="sb-name">
@@ -560,11 +613,7 @@ const SideBar = () => {
         onDragEnd={() => handleDragEnd("masterSlotCourses")}
         onDragOver={handleDragOver}
         style={{
-          backgroundColor: isCoursePlanDragging
-            ? isDarkMode
-              ? "#3F4246"
-              : "lightblue"
-            : "transparent",
+          backgroundColor: backgroundColorCourseConfig,
           transition: "background-color 0.3s ease",
           borderBottom: "2px solid black",
           minHeight: "200px",
@@ -573,34 +622,7 @@ const SideBar = () => {
           borderTopRightRadius: "20px",
         }}
       >
-        {masterSlots.length === 0 ? (
-          coursePlan.length === 0 ? (
-            emptyMasterSlot()
-          ) : (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "200px",
-              }}
-            >
-              <p
-                style={{
-                  lineHeight: "1.5",
-                  textAlign: "center",
-                  userSelect: "none",
-                }}
-              >
-                Drag courses back here to lock in your section choice!
-              </p>
-              <button onClick={handleRemoveAllClick}>Remove All</button>
-            </div>
-          )
-        ) : (
-          masterSlots
-        )}
+        {masterSlotsColumn(masterSlots.length, coursePlan.length)}
       </div>
       <div
         className="sb-course-scheduling"
@@ -658,11 +680,7 @@ const SideBar = () => {
           style={{
             minHeight: "200px",
             padding: "8px",
-            backgroundColor: isMasterCourseDragging
-              ? isDarkMode
-                ? "#3F4246"
-                : "lightblue"
-              : "transparent",
+            backgroundColor: backgroundColorMasterCourseDragging,
             transition: "background-color 0.3s ease",
             borderRadius: "20px",
             display: "flex",
