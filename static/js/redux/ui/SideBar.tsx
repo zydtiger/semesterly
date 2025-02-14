@@ -19,7 +19,7 @@ import ClickOutHandler from "react-onclickout";
 import MasterSlot from "./MasterSlot";
 import TimetableNameInput from "./TimetableNameInput";
 import CreditTicker from "./CreditTicker";
-import { alertsActions , AlertCoursePlanType } from "../state/slices";
+import { alertsActions, AlertCoursePlanType } from "../state/slices";
 import { getNextAvailableColour } from "../util";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import {
@@ -112,8 +112,10 @@ const SideBar = () => {
   const isDarkMode = theme && theme.name && theme.name === "dark";
 
   // state to keep track of active background color
-  const [backgroundColorCourseConfig, setBackgroundColorCourseConfig] = useState("transparent")
-  const [backgroundColorMasterCourseDragging, setBackgroundColorMasterCourseDragging] = useState("transparent")
+  const [backgroundColorCourseConfig, setBackgroundColorCourseConfig] =
+    useState("transparent");
+  const [backgroundColorMasterCourseDragging, setBackgroundColorMasterCourseDragging] =
+    useState("transparent");
 
   // helper to store the current selected sectionsW
   const currentSections = useMemo(
@@ -520,19 +522,19 @@ const SideBar = () => {
 
   useEffect(() => {
     if (isCoursePlanDragging) {
-      setBackgroundColorCourseConfig(isDarkMode ? "#3F4246" : "lightblue")
+      setBackgroundColorCourseConfig(isDarkMode ? "#3F4246" : "lightblue");
     } else {
-      setBackgroundColorCourseConfig("transparent")
+      setBackgroundColorCourseConfig("transparent");
     }
-  }, [isCoursePlanDragging, isDarkMode])
+  }, [isCoursePlanDragging, isDarkMode]);
 
   useEffect(() => {
-    if (isCoursePlanDragging) {
-      setBackgroundColorMasterCourseDragging(isDarkMode ? "#3F4246" : "lightblue")
+    if (isMasterCourseDragging) {
+      setBackgroundColorMasterCourseDragging(isDarkMode ? "#3F4246" : "lightblue");
     } else {
-      setBackgroundColorMasterCourseDragging("transparent")
+      setBackgroundColorMasterCourseDragging("transparent");
     }
-  }, [isMasterCourseDragging, isDarkMode])
+  }, [isMasterCourseDragging, isDarkMode]);
 
   const masterSlotsColumn = (masterSlotsLen: number, coursePlanLen: number) => {
     if (masterSlotsLen === 0 && coursePlanLen === 0) {
@@ -561,12 +563,11 @@ const SideBar = () => {
           </p>
           <button onClick={handleRemoveAllClick}>Remove All</button>
         </div>
-      )
+      );
     }
 
-    return masterSlots
-
-  }
+    return masterSlots;
+  };
 
   return (
     <div className="side-bar no-print overflow-y-auto overflow-x-hidden">
