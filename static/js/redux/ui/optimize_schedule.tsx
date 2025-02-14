@@ -1,4 +1,5 @@
 // Helper functions for scheduling courses
+/* eslint no-shadow: "off" */
 import { DenormalizedCourse, Section } from "../constants/commonTypes";
 
 function timeToMinutes(time: string): number {
