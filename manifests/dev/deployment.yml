@@ -42,6 +42,10 @@ spec:
         image: uisacr.azurecr.io/pgbouncer:latest
         ports:
         - containerPort: 5432
+        volumeMounts:
+        - mountPath: /etc/pgbouncer/client_root_ca.crt
+          name: semesterly-az-postgres-tls-root-ca
+          subPath: client_root_ca.crt
         resources:
           requests:
             cpu: 100m
@@ -79,6 +83,8 @@ spec:
               value: plain
             - name: SERVER_TLS_SSLMODE
               value: verify-ca
+            - name: PGBOUNCER_CLIENT_TLS_CA_FILE
+              value: "/etc/pgbouncer/client_root_ca.crt"
             - name: MAX_CLIENT_CONN
               value: "10000"
             - name: DEFAULT_POOL_SIZE
@@ -180,3 +186,8 @@ spec:
                 secretKeyRef:
                   name: semesterly-secrets
                   key: JHU_JWT_AUTH_SECRET
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: semesterly-az-postgres-tls-root-ca.crt
+        name: semesterly-az-postgres-tls-root-ca

@@ -117,7 +117,7 @@ const CourseModal = () => {
           </div>
         </h2>
         <div className="modal-close" onClick={hide}>
-          <i className="fa fa-times" />
+          <i className="fa-solid fa-xmark" />
         </div>
         <div className="modal-share">
           <i className="fa fa-share-alt" onClick={showShareLink} />

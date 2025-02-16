@@ -55,7 +55,7 @@ const TimeSelector = (props: TimeSelectorProps) => {
       />
       <div className="time-selector-day">
         <div style={{ marginRight: "2px" }}>{day.slice(0, 3)}</div>
-        <i className="fa fa-times" onClick={() => remove(day)} />
+        <i className="fa-solid fa-xmark" onClick={() => remove(day)} />
       </div>
     </div>
   );

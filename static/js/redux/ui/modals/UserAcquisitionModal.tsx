@@ -66,7 +66,7 @@ const UserAcquisitionModal = () => {
           }}
         >
           <span className="img-icon">
-            <i className="fa fa-facebook" />
+            <i className="fa-brands fa-facebook" />
           </span>
           <span>Continue with Facebook</span>
         </button>

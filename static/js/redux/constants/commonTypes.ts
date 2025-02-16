@@ -168,6 +168,15 @@ export interface Course {
 }
 
 /**
+ * The display mode of course prerequisites.
+ */
+export enum PrereqModeStatus {
+  ORIGINAL = "original",
+  NAME = "name",
+  CODE = "code",
+}
+
+/**
  * RelatedCourse is a course that is related to the current course based on some
  * criteria. This is a feature that isn't currently maintained, but is still used in the
  * codebase.

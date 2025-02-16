@@ -312,7 +312,7 @@ const UserSettingsModal = () => {
 
   const cancelButton = (
     <div className="modal-close" onClick={hide}>
-      <i className="fa fa-times" />
+      <i className="fa-solid fa-xmark" />
     </div>
   );
 

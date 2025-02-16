@@ -55,7 +55,7 @@ class TermsOfServiceBanner extends React.Component {
           className="tos-banner__close"
           onClick={() => this.props.dismissTermsOfServiceBanner()}
         >
-          <i className="fa fa-times" />
+          <i className="fa-solid fa-xmark" />
         </div>
       </div>
     );

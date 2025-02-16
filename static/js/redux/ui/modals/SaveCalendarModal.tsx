@@ -43,7 +43,7 @@ const SaveCalendarModal = () => {
         className="modal-close"
         onClick={() => dispatch(saveCalendarModalActions.toggleSaveCalendarModal())}
       >
-        <i className="fa fa-times" />
+        <i className="fa-solid fa-xmark" />
       </div>
     </div>
   );

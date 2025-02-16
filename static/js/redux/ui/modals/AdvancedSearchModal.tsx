@@ -478,7 +478,7 @@ const AdvancedSearchModal = () => {
               dispatch(advancedSearchActions.hideAdvancedSearchModal())
             }
           >
-            <i className="fa fa-times" />
+            <i className="fa-solid fa-xmark" />
           </div>
         </div>
         <div className="advanced-search-body">

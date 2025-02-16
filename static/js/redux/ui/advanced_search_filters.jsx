@@ -103,7 +103,7 @@ Filter.propTypes = {
 export const SelectedFilter = ({ name, remove }) => (
   <div className="selected-filter">
     <span style={{ marginRight: "8px" }}>{name}</span>
-    <i className="fa fa-times" onClick={() => remove()} />
+    <i className="fa-solid fa-xmark" onClick={() => remove()} />
   </div>
 );
 

@@ -27,7 +27,7 @@ exports[`TOS Banner Renders As Expected fully if isVisible 1`] = `
       class="tos-banner__close"
     >
       <i
-        class="fa fa-times"
+        class="fa-solid fa-xmark"
       />
     </div>
   </div>
@@ -61,7 +61,7 @@ exports[`TOS Banner Renders As Expected null if not isVisible 1`] = `
       class="tos-banner__close"
     >
       <i
-        class="fa fa-times"
+        class="fa-solid fa-xmark"
       />
     </div>
   </div>

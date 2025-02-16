@@ -252,7 +252,7 @@ const Semesterly = () => {
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
-                  href="https://github.com/jhuopensource/semesterly/issues/new/choose"
+                  href="https://forms.gle/oDP3GmRLRVsDKmdU6"
                 >
                   Feedback
                 </a>
@@ -282,7 +282,7 @@ const Semesterly = () => {
                   rel="noopener noreferrer"
                   href="https://github.com/jhuopensource/semesterly"
                 >
-                  <i className="fa fa-github" />
+                  <i className="fa-brands fa-github" />
                   Follow
                 </a>
               </li>
