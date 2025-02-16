@@ -70,6 +70,7 @@ export interface Section {
   semester: Semester;
   waitlist: number;
   waitlist_size: number;
+  course_id?: number;
 }
 
 /**
