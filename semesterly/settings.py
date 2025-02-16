@@ -108,7 +108,7 @@ SOCIAL_AUTH_OIDC_TOKEN_ENDPOINT_AUTH_METHOD = 'client_secret_post'
 SOCIAL_AUTH_OIDC_USERNAME_KEY = 'sub'
 
 AUTHENTICATION_BACKENDS = (
-    # "social_core.backends.azuread_tenant.AzureADTenantOAuth2",
+    "social_core.backends.azuread_tenant.AzureADTenantOAuth2",
     "social_core.backends.open_id_connect.OpenIdConnectAuth",
     "social_core.backends.facebook.FacebookOAuth2",
     "social_core.backends.google.GoogleOAuth2",
