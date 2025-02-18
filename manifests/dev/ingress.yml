@@ -29,5 +29,4 @@ spec:
   tls:
   - hosts:
     - semesterly-dev.az.sis.jhu.edu
-    - "*.semesterly-dev.az.sis.jhu.edu"
-    secretName: az-wildcard-tls
+    secretName: semesterlydev-az

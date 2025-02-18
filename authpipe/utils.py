@@ -66,20 +66,19 @@ def try_associate_jhed(response, **kwargs):
     except BaseException:
         pass
 
+
 # Look for openid field (present if logging in via OIDC)
 def try_associate_jhed_oidc(response, **kwargs):
     try:
         jh_email = response["openid"]
-        at_index = jh_email.find("@")
-    
-        if at_index == -1:
+        if not jh_email or "@" not in jh_email:
             return
-        
-        jhed = jh_email[:at_index]
-        student = Student.objects.get(jhed=jhed) # need to error check for this?
+        jhed = jh_email.split("@", 1)[0]
+        student = Student.objects.get(jhed=jhed)  # need to error check for this?
         kwargs["user"] = student.user
     except BaseException:
         pass
+
 
 def try_associate_token(strategy, **kwargs):
     try:
@@ -151,21 +150,20 @@ def update_student_jhed(student, response):
     student.jhed = response["unique_name"]
     student.preferred_name = response["name"]
 
+
 # This step here should fill in the 'email' field in the auth_user table correctly, i.e. not with @jhu.edu, but @jh.edu (using openid field in response)
 # Should also fill in the 'jhed' field in the student_student table
 def update_student_jhed_oidc(student, response):
     student_openid = response["openid"]
-    at_index = student_openid.find('@')
-    
-    if at_index == -1:
+    if not student_openid or "@" not in student_openid:
         return
-
-    student.jhed = student_openid[:at_index]
+    student.jhed = student_openid.split("@", 1)[0]
     student.preferred_name = response["given_name"]
 
     user_obj = student.user
     user_obj.email = student_openid
     user_obj.save()
+
 
 def update_student_google(student, social_user, hasFacebook):
     try:

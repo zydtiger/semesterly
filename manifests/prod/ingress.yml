@@ -28,6 +28,5 @@ spec:
                 number: 80
   tls:
   - hosts:
-    - "semesterly-prod.az.sis.jhu.edu"
-    - "*.semesterly-prod.az.sis.jhu.edu"
-    secretName: az-wildcard-tls
+    - semesterly-prod.az.sis.jhu.edu
+    secretName: semesterly-az

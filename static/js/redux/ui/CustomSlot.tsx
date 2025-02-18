@@ -165,7 +165,10 @@ const CustomSlot = (props: CustomSlotProps) => {
   };
 
   const removeButton = hovered ? (
-    <i className="fa-solid fa-xmark" onClick={(event) => removeCustomButtonClicked(event)} />
+    <i
+      className="fa-solid fa-xmark"
+      onClick={(event) => removeCustomButtonClicked(event)}
+    />
   ) : null;
 
   const convertedStart =
