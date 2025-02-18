@@ -201,7 +201,6 @@ spec:
                 secretKeyRef:
                   name: semesterly-secrets
                   key: SOCIAL_AUTH_OIDC_SECRET
-            
       volumes:
       - configMap:
           defaultMode: 420
