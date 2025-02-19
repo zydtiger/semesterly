@@ -31,6 +31,9 @@ SECRETS = {
     "SOCIAL_AUTH_AZURE_TENANT_SECRET": None,
     "SOCIAL_AUTH_AZURE_TENANT_ID": None,
     "STUDENT_SIS_AUTH_SECRET": "TEST_KEY",
+    "SOCIAL_AUTH_OIDC_OIDC_ENDPOINT": None,
+    "SOCIAL_AUTH_OIDC_SECRET": None,
+    "SOCIAL_AUTH_OIDC_KEY": None,
     # Not essential for testing, but can be filled in for advanced usage
     "GW_PASS": None,
     "GW_SECURITY_ANSWER": None,
