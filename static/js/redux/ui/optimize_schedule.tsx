@@ -63,7 +63,10 @@ function getFeasibleSchedules(
     }
     const currentCourse = courses[courseIndex];
     currentCourse.sections.forEach((section) => {
-      if (isFeasible([...currentSchedule, ...lockedSections], section))
+      if (
+        section.offering_set.length > 0 &&
+        isFeasible([...currentSchedule, ...lockedSections], section)
+      )
         backtrack([...currentSchedule, section], courseIndex + 1);
     });
   }
