@@ -27,9 +27,6 @@ SECRETS = {
     "SOCIAL_AUTH_FACEBOOK_SECRET": "0eac3d0db71f27b07f03d7fd6a760a33",
     "FB_TEST_EMAIL": "open_ejvbpxf_user@tfbnw.net",
     "FB_TEST_PASS": "asdfasdfdsfdsfadfdsflsdflglfg",
-    "SOCIAL_AUTH_AZURE_TENANT_KEY": None,
-    "SOCIAL_AUTH_AZURE_TENANT_SECRET": None,
-    "SOCIAL_AUTH_AZURE_TENANT_ID": None,
     "STUDENT_SIS_AUTH_SECRET": "TEST_KEY",
     "SOCIAL_AUTH_OIDC_OIDC_ENDPOINT": None,
     "SOCIAL_AUTH_OIDC_SECRET": None,
@@ -37,7 +34,7 @@ SECRETS = {
     # Not essential for testing, but can be filled in for advanced usage
     "GW_PASS": None,
     "GW_SECURITY_ANSWER": None,
-    "JHU_API_KEY": "Z33DyKCS864qRJnVAsC5FgdAtgV92NhF",
+    "JHU_API_KEY": None,
     "VANDY_USER": None,
     "VANDY_PASS": None,
     # Not essential for testing, but can be filled in for advanced mailing usage
