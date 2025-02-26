@@ -44,7 +44,6 @@ def associate_students(strategy, details, response, user, *args, **kwargs):
     the new provider (e.g. Facebook, JHED, or Google).
     """
     try_associate_email(**kwargs)
-    try_associate_jhed(response, **kwargs)
     try_associate_jhed_oidc(response, **kwargs)
     try_associate_token(strategy, **kwargs)
     return kwargs
@@ -56,16 +55,6 @@ def try_associate_email(**kwargs):
         kwargs["user"] = User.objects.get(email=email)
     except BaseException:
         pass
-
-
-def try_associate_jhed(response, **kwargs):
-    try:
-        jhed = response["unique_name"]
-        student = Student.objects.get(jhed=jhed)
-        kwargs["user"] = student.user
-    except BaseException:
-        pass
-
 
 # Look for openid field (present if logging in via OIDC)
 def try_associate_jhed_oidc(response, **kwargs):
@@ -104,8 +93,6 @@ def create_student(strategy, details, response, user, *args, **kwargs):
     hasFacebook = user.social_auth.filter(provider="facebook").exists()
     if backend_name == "facebook":
         update_student_facebook(student, social_user)
-    elif backend_name == "azuread-tenant-oauth2":
-        update_student_jhed(student, response)
     elif backend_name == "oidc":
         update_student_jhed_oidc(student, response)
     elif backend_name == "google-oauth2":
