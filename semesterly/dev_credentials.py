@@ -21,10 +21,10 @@ SECRETS = {
     "SECRET_KEY": "ca&+%f9xv*$56z@8278xw*ci7_db9w=^dhkqmwu3as&30u%w+$",
     "HASHING_SALT": "t9wg0p7x1$x5on89f*yk=tk*+$!g6g",
     "GOOGLE_API_KEY": "AIzaSyB4O0Z89wwSWdVFufZMmW7n05ftUaau9cs",
-    "SOCIAL_AUTH_GOOGLE_OAUTH2_KEY": "207925266161-qa90rek8apc0ablkjr3565um4u9kiht1.apps.googleusercontent.com",
-    "SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET": "OiVIoVFTZrWXZ87tx7r1KJoo",
-    "SOCIAL_AUTH_FACEBOOK_KEY": "2008148216081463",
-    "SOCIAL_AUTH_FACEBOOK_SECRET": "75f855457ff18db012e57ccaaf3470eb",
+    "SOCIAL_AUTH_GOOGLE_OAUTH2_KEY": "240262436056-2rknvaqpu6r1or1mel5fgmn24mrs270r.apps.googleusercontent.com",
+    "SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET": "fzguC7-SA40ubInqPNUZCo-Y",
+    "SOCIAL_AUTH_FACEBOOK_KEY": "580022102164877",
+    "SOCIAL_AUTH_FACEBOOK_SECRET": "0eac3d0db71f27b07f03d7fd6a760a33",
     "FB_TEST_EMAIL": "open_ejvbpxf_user@tfbnw.net",
     "FB_TEST_PASS": "asdfasdfdsfdsfadfdsflsdflglfg",
     "SOCIAL_AUTH_AZURE_TENANT_KEY": None,
@@ -34,7 +34,7 @@ SECRETS = {
     # Not essential for testing, but can be filled in for advanced usage
     "GW_PASS": None,
     "GW_SECURITY_ANSWER": None,
-    "JHU_API_KEY": None,
+    "JHU_API_KEY": "Z33DyKCS864qRJnVAsC5FgdAtgV92NhF",
     "VANDY_USER": None,
     "VANDY_PASS": None,
     # Not essential for testing, but can be filled in for advanced mailing usage
