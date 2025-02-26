@@ -56,6 +56,7 @@ def try_associate_email(**kwargs):
     except BaseException:
         pass
 
+
 # Look for openid field (present if logging in via OIDC)
 def try_associate_jhed_oidc(response, **kwargs):
     try:
