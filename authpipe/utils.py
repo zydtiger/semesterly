@@ -64,7 +64,7 @@ def try_associate_email(**kwargs):
         email = kwargs_base.get("email") or kwargs_base.get("username")
         if email is None:
             return
-        
+
         found_user = User.objects.get(email=email)
         kwargs["user"] = found_user
         return found_user
@@ -93,7 +93,7 @@ def try_associate_token(strategy, **kwargs):
         student = Student.objects.get(id=hashids.decrypt(ref)[0])
         if check_student_token(student, token):
             kwargs["user"] = student.user
-            return student.user  
+            return student.user
     except BaseException:
         return None
 
