@@ -37,81 +37,21 @@ def check_student_token(student, token):
     return True
 
 
-# def associate_students(strategy, details, response, user, *args, **kwargs):
-#     """
-#     Part of our custom Python Social Auth authentication pipeline. If a user
-#     already has an account associated with an email, associates that user with
-#     the new provider (e.g. Facebook, JHED, or Google).
-#     """
-#     most_recent_associate = 'start'
-#     kwargs["user"] = None
-#     # user = None
-#     user = try_associate_email(**kwargs)
-#     user = user or try_associate_jhed_oidc(response, **kwargs)
-#     user = user or try_associate_token(strategy, **kwargs)
-
-#     if user is not None:
-#         kwargs["user"] = user
-
-#     return kwargs
-
-
-# def try_associate_email(**kwargs):
-#     try:
-#         kwargs_base = kwargs.get("details") or kwargs
-#         if kwargs_base is None:
-#             return
-
-#         email = kwargs_base.get("email") or kwargs_base.get("username")
-#         if email is None:
-#             return
-
-#         found_user = User.objects.get(email=email)
-#         kwargs["user"] = found_user
-#         return found_user
-#     except BaseException:
-#         return None
-
-
-# # Look for openid field (present if logging in via OIDC)
-# def try_associate_jhed_oidc(response, **kwargs):
-#     try:
-#         jh_email = response["openid"]
-#         if not jh_email or "@" not in jh_email:
-#             return
-#         jhed = jh_email.split("@", 1)[0]
-#         student = Student.objects.get(jhed=jhed)  # need to error check for this?
-#         kwargs["user"] = student.user
-#         return student.user
-#     except BaseException:
-#         return None
-
-
-# def try_associate_token(strategy, **kwargs):
-#     try:
-#         token = strategy.session_get("student_token")
-#         ref = strategy.session_get("login_hash")
-#         student = Student.objects.get(id=hashids.decrypt(ref)[0])
-#         if check_student_token(student, token):
-#             kwargs["user"] = student.user
-#             return student.user
-
-#     except BaseException:
-#         return None
-
-
 def associate_students(strategy, details, response, user, *args, **kwargs):
     """
     Part of our custom Python Social Auth authentication pipeline. If a user
     already has an account associated with an email, associates that user with
     the new provider (e.g. Facebook, JHED, or Google).
     """
-    most_recent_associate = "start"
-    kwargs["user"] = None
+    # kwargs["user"] = None
     # user = None
-    try_associate_email(**kwargs)
-    try_associate_jhed_oidc(response, **kwargs)
-    try_associate_token(strategy, **kwargs)
+    user = try_associate_email(**kwargs)
+    user = user or try_associate_jhed_oidc(response, **kwargs)
+    user = user or try_associate_token(strategy, **kwargs)
+
+    if user is not None:
+        kwargs["user"] = user
+
     return kwargs
 
 
@@ -124,11 +64,12 @@ def try_associate_email(**kwargs):
         email = kwargs_base.get("email") or kwargs_base.get("username")
         if email is None:
             return
-
+        
         found_user = User.objects.get(email=email)
         kwargs["user"] = found_user
+        return found_user
     except BaseException:
-        pass
+        return None
 
 
 # Look for openid field (present if logging in via OIDC)
@@ -140,8 +81,9 @@ def try_associate_jhed_oidc(response, **kwargs):
         jhed = jh_email.split("@", 1)[0]
         student = Student.objects.get(jhed=jhed)  # need to error check for this?
         kwargs["user"] = student.user
+        return student.user
     except BaseException:
-        pass
+        return None
 
 
 def try_associate_token(strategy, **kwargs):
@@ -151,8 +93,9 @@ def try_associate_token(strategy, **kwargs):
         student = Student.objects.get(id=hashids.decrypt(ref)[0])
         if check_student_token(student, token):
             kwargs["user"] = student.user
+            return student.user  
     except BaseException:
-        pass
+        return None
 
 
 def create_student(strategy, details, response, user, *args, **kwargs):
