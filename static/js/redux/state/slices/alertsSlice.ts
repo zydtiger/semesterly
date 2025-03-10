@@ -85,7 +85,7 @@ const alertsSlice = createSlice({
         mostFriendsCount: number;
         mostFriendsClassId: number;
         totalFriendsCount: number;
-      }>,
+      }>
     ) => {
       state.mostFriendsCount = action.payload.mostFriendsCount;
       state.mostFriendsClassId = action.payload.mostFriendsClassId;
@@ -95,7 +95,7 @@ const alertsSlice = createSlice({
     // New reducer for empty schedule alert
     alertCoursePlan: (
       state,
-      action: PayloadAction<{ alertType: AlertCoursePlanType }>,
+      action: PayloadAction<{ alertType: AlertCoursePlanType }>
     ) => {
       state.alertCoursePlan = true;
       state.alertCoursePlanType = action.payload.alertType;
