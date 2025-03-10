@@ -53,11 +53,11 @@ const Semesterly = () => {
 
   const dataLastUpdated = useAppSelector((state) => state.school.dataLastUpdated);
   const alertChangeSemester = useAppSelector(
-    (state) => state.alerts.alertChangeSemester
+    (state) => state.alerts.alertChangeSemester,
   );
   const alertConflict = useAppSelector((state) => state.alerts.alertConflict);
   const alertDeleteTimetable = useAppSelector(
-    (state) => state.alerts.alertDeleteTimetable
+    (state) => state.alerts.alertDeleteTimetable,
   );
 
   const alertCoursePlan = useAppSelector((state) => state.alerts.alertCoursePlan);
@@ -65,16 +65,16 @@ const Semesterly = () => {
   const alertNewTimetable = useAppSelector((state) => state.alerts.alertNewTimetable);
 
   const alertTimetableExists = useAppSelector(
-    (state) => state.alerts.alertTimetableExists
+    (state) => state.alerts.alertTimetableExists,
   );
 
   const isComparingTimetables = useAppSelector(
-    (state) => state.compareTimetable.isComparing
+    (state) => state.compareTimetable.isComparing,
   );
 
   const mql = window.matchMedia("(orientation: portrait)");
   const [orientation, setOrientation] = useState(
-    !mql.matches ? "landscape" : "portrait"
+    !mql.matches ? "landscape" : "portrait",
   );
 
   const alertBoxRef = useRef<AlertBox>(null);
@@ -192,7 +192,7 @@ const Semesterly = () => {
   };
 
   const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-    navigator.userAgent
+    navigator.userAgent,
   );
   const cal =
     mobile && window.innerWidth < 767 && orientation === "portrait" ? (
