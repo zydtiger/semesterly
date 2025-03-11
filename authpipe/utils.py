@@ -17,11 +17,15 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
 from hashids import Hashids
+import logging
 
 from student.models import Student
 from semesterly.settings import get_secret
 
 hashids = Hashids(salt=get_secret("HASHING_SALT"))
+
+logger = logging.getLogger(__name__)
+# logger.setLevel(logging.DEBUG)
 
 
 def check_student_token(student, token):
@@ -45,57 +49,141 @@ def associate_students(strategy, details, response, user, *args, **kwargs):
     """
     # kwargs["user"] = None
     # user = None
-    user = try_associate_email(**kwargs)
-    user = user or try_associate_jhed_oidc(response, **kwargs)
-    user = user or try_associate_token(strategy, **kwargs)
+
+    logger.debug("xd")
+
+    user = try_associate_email(user, response, **kwargs)
+    user = try_associate_jhed_oidc(user, response, **kwargs)
+    user = try_associate_token(user, strategy, **kwargs)
 
     if user is not None:
+        logger.debug("associate_students: Successfully associated student.")
         kwargs["user"] = user
+    else:
+        logger.debug(
+            "'associate_students' failed to find a matching [user] for this login."
+        )
 
     return kwargs
 
 
-def try_associate_email(**kwargs):
+def try_associate_email(user, response, **kwargs):
+    logger.debug("here in email")
     try:
         kwargs_base = kwargs.get("details") or kwargs
         if kwargs_base is None:
-            return
+            raise Exception("try_associate_email: 'kwargs_base' is None")
 
-        email = kwargs_base.get("email") or kwargs_base.get("username")
+        email = kwargs_base.get("email")
         if email is None:
-            return
+            logger.debug(
+                "try_associate_email: 'email' from kwargs_base is None. trying from 'response'..."
+            )
+            email = response.get("email")
+            if email is None:
+                raise Exception("try_associate_email: 'email' is None")
 
-        found_user = User.objects.get(email=email)
-        kwargs["user"] = found_user
-        return found_user
-    except BaseException:
+        logger.debug(f"found email: {email}")
+        found_users = User.objects.filter(email=email)
+        if not found_users.exists():
+            logger.debug(f"try_associate_email: No student found for email: {email}")
+            return user
+
+        if found_users.count() > 1:
+            logger.debug(
+                f"try_associate_email: Found multiple users for email: {email}. Returning the first 'user' with id={found_users.first().id}"
+            )
+
+        final_user = found_users.first()
+
+        kwargs["user"] = final_user
+        logger.debug("try_associate_email: successfully associated student via email.")
+        return final_user
+    except Exception as e:
+        logger.debug(
+            f"try_associate_email: error while trying to associate via email: {e}"
+        )
         return None
 
 
 # Look for openid field (present if logging in via OIDC)
-def try_associate_jhed_oidc(response, **kwargs):
+def try_associate_jhed_oidc(user, response, **kwargs):
     try:
-        jh_email = response["openid"]
+        jh_email = response.get("openid")
         if not jh_email or "@" not in jh_email:
-            return
+            return user
+
         jhed = jh_email.split("@", 1)[0]
-        student = Student.objects.get(jhed=jhed)  # need to error check for this?
-        kwargs["user"] = student.user
-        return student.user
-    except BaseException:
+        students = Student.objects.filter(jhed=jhed)
+
+        if not students.exists():
+            logger.debug(f"try_associate_jhed_oidc: No student found for JHED: {jhed}")
+            return user
+
+        if students.count() > 1:
+            logger.debug(
+                f"try_associate_jhed_oidc: Multiple students found for JHED: {jhed}. Returning the first 'student' with id={students.first().id}"
+            )
+
+        final_student = students.first()
+        final_user = final_student.user
+
+        if students.count() > 1:
+            logger.debug(
+                f"try_associate_jhed_oidc: Multiple students found for JHED: {jhed}. Returning the first 'user' with id={final_user.id}"
+            )
+
+        kwargs["user"] = final_student.user
+        logger.debug(
+            f"try_associate_jhed_oidc: successfully associated student via JHED={jhed}."
+        )
+        return final_student.user
+    except Exception as e:
+        logger.debug(
+            f"try_associate_jhed_oidc: error while trying to associate via JHED: {e}"
+        )
         return None
 
 
-def try_associate_token(strategy, **kwargs):
+def try_associate_token(user, strategy, **kwargs):
     try:
         token = strategy.session_get("student_token")
         ref = strategy.session_get("login_hash")
-        student = Student.objects.get(id=hashids.decrypt(ref)[0])
-        if check_student_token(student, token):
-            kwargs["user"] = student.user
-            return student.user
-    except BaseException:
-        return None
+        if not token or not ref:
+            return user
+
+        decrypted_ref = hashids.decrypt(ref)
+        if not decrypted_ref:
+            return user
+
+        students = Student.objects.filter(id=decrypted_ref[0])
+        if not students.exists():
+            logger.debug(
+                f"try_associate_token: No student found for token reference: {ref}."
+            )
+            return user
+
+        if students.count() > 1:
+            logger.debug(
+                f"try_associate_token: Found multiple students for token reference: {ref}. Returning the first student with id={students.first().id}"
+            )
+
+        final_student = students.first()
+        if check_student_token(final_student, token):
+            kwargs["user"] = final_student.user
+            logger.debug(
+                "try_associate_token: successfully associated student via token."
+            )
+            return final_student.user
+        else:
+            logger.debug("try_associate_token: failed to associate via token.")
+            return user
+
+    except Exception as e:
+        logger.debug(
+            f"try_associate_token: error while trying to associate via token: {e}"
+        )
+        return user
 
 
 def create_student(strategy, details, response, user, *args, **kwargs):
