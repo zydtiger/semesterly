@@ -47,27 +47,22 @@ def associate_students(strategy, details, response, user, *args, **kwargs):
     already has an account associated with an email, associates that user with
     the new provider (e.g. Facebook, JHED, or Google).
     """
-    # kwargs["user"] = None
+    kwargs["user"] = user
     # user = None
 
-    logger.debug("xd")
-
-    user = try_associate_email(user, response, **kwargs)
-    user = try_associate_jhed_oidc(user, response, **kwargs)
-    user = try_associate_token(user, strategy, **kwargs)
-
-    if user is not None:
-        logger.debug("associate_students: Successfully associated student.")
-        kwargs["user"] = user
-    else:
-        logger.debug(
-            "'associate_students' failed to find a matching [user] for this login."
-        )
+    try_associate_email(response, **kwargs)
+    try_associate_jhed_oidc(response, **kwargs)
+    try_associate_token(strategy, **kwargs)
+    
+    try:
+        logger.debug(f"associate_students: end of function, kwargs['user']={kwargs['user']}")
+    except Exception as e:
+        logger.debug(f"kwargs['user'] error: {e}")
 
     return kwargs
 
 
-def try_associate_email(user, response, **kwargs):
+def try_associate_email(response, **kwargs):
     logger.debug("here in email")
     try:
         kwargs_base = kwargs.get("details") or kwargs
@@ -86,8 +81,7 @@ def try_associate_email(user, response, **kwargs):
         logger.debug(f"found email: {email}")
         found_users = User.objects.filter(email=email)
         if not found_users.exists():
-            logger.debug(f"try_associate_email: No student found for email: {email}")
-            return user
+            raise Exception(f"try_associate_email: No student found for email: {email}")
 
         if found_users.count() > 1:
             logger.debug(
@@ -103,22 +97,21 @@ def try_associate_email(user, response, **kwargs):
         logger.debug(
             f"try_associate_email: error while trying to associate via email: {e}"
         )
-        return None
+        return
 
 
 # Look for openid field (present if logging in via OIDC)
-def try_associate_jhed_oidc(user, response, **kwargs):
+def try_associate_jhed_oidc(response, **kwargs):
     try:
         jh_email = response.get("openid")
         if not jh_email or "@" not in jh_email:
-            return user
+            raise Exception("try_associate_jhed_oidc: openid key format invalid")
 
         jhed = jh_email.split("@", 1)[0]
         students = Student.objects.filter(jhed=jhed)
 
         if not students.exists():
-            logger.debug(f"try_associate_jhed_oidc: No student found for JHED: {jhed}")
-            return user
+            raise Exception(f"try_associate_jhed_oidc: No student found for JHED: {jhed}")
 
         if students.count() > 1:
             logger.debug(
@@ -135,33 +128,30 @@ def try_associate_jhed_oidc(user, response, **kwargs):
 
         kwargs["user"] = final_student.user
         logger.debug(
-            f"try_associate_jhed_oidc: successfully associated student via JHED={jhed}."
+            f"try_associate_jhed_oidc: successfully associated student via JHED={jhed}, auth_user id={final_student.user.id}, student_student id={final_student.id}."
         )
         return final_student.user
     except Exception as e:
         logger.debug(
             f"try_associate_jhed_oidc: error while trying to associate via JHED: {e}"
         )
-        return None
-
-
-def try_associate_token(user, strategy, **kwargs):
+        return
+    
+    
+def try_associate_token(strategy, **kwargs):
     try:
         token = strategy.session_get("student_token")
         ref = strategy.session_get("login_hash")
         if not token or not ref:
-            return user
+            raise Exception("try_associate_token: strategy.token and/or strategy.ref invalid")
 
         decrypted_ref = hashids.decrypt(ref)
         if not decrypted_ref:
-            return user
+            raise Exception("try_associate_token: hashids.decrypt(ref) invalid")
 
         students = Student.objects.filter(id=decrypted_ref[0])
         if not students.exists():
-            logger.debug(
-                f"try_associate_token: No student found for token reference: {ref}."
-            )
-            return user
+            raise Exception(f"try_associate_token: no student found for token reference: {ref}")
 
         if students.count() > 1:
             logger.debug(
@@ -174,16 +164,16 @@ def try_associate_token(user, strategy, **kwargs):
             logger.debug(
                 "try_associate_token: successfully associated student via token."
             )
-            return final_student.user
+            return
         else:
-            logger.debug("try_associate_token: failed to associate via token.")
-            return user
+            raise Exception("try_associate_token: failed to associate via token.")
+
 
     except Exception as e:
         logger.debug(
             f"try_associate_token: error while trying to associate via token: {e}"
         )
-        return user
+        return
 
 
 def create_student(strategy, details, response, user, *args, **kwargs):
@@ -194,7 +184,9 @@ def create_student(strategy, details, response, user, *args, **kwargs):
     Saves friends and other information to fill database.
     """
     backend_name = kwargs["backend"].name
-    student, _ = Student.objects.get_or_create(user=user)
+    student, status = Student.objects.get_or_create(user=user)
+    if status is True:
+        logger.debug(f"create_student: could not find existing Student for user with id={user.id}, so created a new one")
     social_user = user.social_auth.filter(provider=backend_name).first()
     hasFacebook = user.social_auth.filter(provider="facebook").exists()
     if backend_name == "facebook":
