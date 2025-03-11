@@ -48,11 +48,15 @@ def associate_students(strategy, details, response, user, *args, **kwargs):
     the new provider (e.g. Facebook, JHED, or Google).
     """
     kwargs["user"] = user
-    # user = None
 
-    try_associate_email(response, **kwargs)
-    try_associate_jhed_oidc(response, **kwargs)
-    try_associate_token(strategy, **kwargs)
+    if not kwargs["user"]:
+        try_associate_email(response, **kwargs)
+        
+    if not kwargs["user"]:
+        try_associate_jhed_oidc(response, **kwargs)
+        
+    if not kwargs["user"]:
+        try_associate_token(strategy, **kwargs)
     
     try:
         logger.debug(f"associate_students: end of function, kwargs['user']={kwargs['user']}")
@@ -92,7 +96,7 @@ def try_associate_email(response, **kwargs):
 
         kwargs["user"] = final_user
         logger.debug("try_associate_email: successfully associated student via email.")
-        return final_user
+        return
     except Exception as e:
         logger.debug(
             f"try_associate_email: error while trying to associate via email: {e}"
@@ -130,7 +134,7 @@ def try_associate_jhed_oidc(response, **kwargs):
         logger.debug(
             f"try_associate_jhed_oidc: successfully associated student via JHED={jhed}, auth_user id={final_student.user.id}, student_student id={final_student.id}."
         )
-        return final_student.user
+        return
     except Exception as e:
         logger.debug(
             f"try_associate_jhed_oidc: error while trying to associate via JHED: {e}"
@@ -167,8 +171,6 @@ def try_associate_token(strategy, **kwargs):
             return
         else:
             raise Exception("try_associate_token: failed to associate via token.")
-
-
     except Exception as e:
         logger.debug(
             f"try_associate_token: error while trying to associate via token: {e}"
