@@ -57,6 +57,7 @@ def associate_students(strategy, details, response, user, *args, **kwargs):
     if not kwargs["user"]:
         try_associate_token(strategy, **kwargs)
 
+    # LOGGING CLAUSE
     try:
         logger.debug(
             f"associate_students: end of function, kwargs['user']={kwargs['user']}"
@@ -87,6 +88,7 @@ def try_associate_email(response, **kwargs):
         if not found_users.exists():
             raise Exception(f"try_associate_email: No student found for email: {email}")
 
+        # LOGGING CLAUSE
         if found_users.count() > 1:
             logger.debug(
                 f"try_associate_email: Found multiple users for email: {email}. Returning the first 'user' with id={found_users.first().id}"
@@ -119,6 +121,7 @@ def try_associate_jhed_oidc(response, **kwargs):
                 f"try_associate_jhed_oidc: No student found for JHED: {jhed}"
             )
 
+        # LOGGING CLAUSE
         if students.count() > 1:
             logger.debug(
                 f"try_associate_jhed_oidc: Multiple students found for JHED: {jhed}. Returning the first 'student' with id={students.first().id}"
@@ -127,6 +130,7 @@ def try_associate_jhed_oidc(response, **kwargs):
         final_student = students.first()
         final_user = final_student.user
 
+        # LOGGING CLAUSE
         if students.count() > 1:
             logger.debug(
                 f"try_associate_jhed_oidc: Multiple students found for JHED: {jhed}. Returning the first 'user' with id={final_user.id}"
@@ -163,6 +167,7 @@ def try_associate_token(strategy, **kwargs):
                 f"try_associate_token: no student found for token reference: {ref}"
             )
 
+        # LOGGING CLAUSE
         if students.count() > 1:
             logger.debug(
                 f"try_associate_token: Found multiple students for token reference: {ref}. Returning the first student with id={students.first().id}"
@@ -193,10 +198,17 @@ def create_student(strategy, details, response, user, *args, **kwargs):
     """
     backend_name = kwargs["backend"].name
     student, status = Student.objects.get_or_create(user=user)
+
+    # LOGGING CLAUSE
     if status is True:
         logger.debug(
             f"create_student: could not find existing Student for user with id={user.id}, so created a new one"
         )
+
+    # LOGGING CLAUSE
+    if Student.objects.filter(user=user).count() > 1:
+        logger.debug(f"create_student: multiple Student objects found for user with id={user.id}. Returned first student, with id={student.id}.")
+
     social_user = user.social_auth.filter(provider=backend_name).first()
     hasFacebook = user.social_auth.filter(provider="facebook").exists()
     if backend_name == "facebook":
