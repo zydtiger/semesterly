@@ -207,7 +207,9 @@ def create_student(strategy, details, response, user, *args, **kwargs):
 
     # LOGGING CLAUSE
     if Student.objects.filter(user=user).count() > 1:
-        logger.debug(f"create_student: multiple Student objects found for user with id={user.id}. Returned first student, with id={student.id}.")
+        logger.debug(
+            f"create_student: multiple Student objects found for user with id={user.id}. Returned first student, with id={student.id}."
+        )
 
     social_user = user.social_auth.filter(provider=backend_name).first()
     hasFacebook = user.social_auth.filter(provider="facebook").exists()
